@@ -18,12 +18,17 @@ const HeroSection = () => (
         </p>
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link to="/register">
-            <Button className="bg-modern-coral hover:bg-modern-coral/90 text-white py-6 px-8 text-lg w-full sm:w-auto">
+            <Button 
+              className="bg-modern-coral hover:bg-modern-coral/80 text-white py-6 px-8 text-lg w-full sm:w-auto"
+            >
               Sou Fotógrafo
             </Button>
           </Link>
           <Link to="/gallery">
-            <Button variant="outline" className="border-2 border-white text-white hover:bg-white/10 py-6 px-8 text-lg w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="border-2 border-white text-white hover:bg-white/20 py-6 px-8 text-lg w-full sm:w-auto"
+            >
               Sou Convidado
             </Button>
           </Link>
