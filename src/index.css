@@ -1,48 +1,49 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Base shadcn colors - redefined to match our palette */
-    --background: 192 15% 94%; /* #ECF0F1 (Light Cloud) */
-    --foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
+    /* Base shadcn colors - redefined to match our new palette */
+    --background: 210 20% 98%; /* #F7F9FB (Branco gelo) */
+    --foreground: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
+    --card-foreground: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
+    --popover-foreground: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
 
-    --primary: 168 75% 43%; /* #1ABC9C (Turquoise) */
+    --primary: 0 100% 71%; /* #FF6B6B (Rosa coral) */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 184 9% 62%; /* #95A5A6 (Silver Grey) */
-    --secondary-foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
+    --secondary: 213 30% 69%; /* #A0AEC0 (Cinza médio) */
+    --secondary-foreground: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
 
-    --muted: 192 15% 94%; /* Lighter version of Light Cloud */
-    --muted-foreground: 184 9% 62%; /* #95A5A6 (Silver Grey) */
+    --muted: 210 20% 98%; /* Lighter version of #F7F9FB */
+    --muted-foreground: 213 30% 69%; /* #A0AEC0 (Cinza médio) */
 
-    --accent: 168 75% 43%; /* #1ABC9C (Turquoise) but less intense */
-    --accent-foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
+    --accent: 156 71% 60%; /* #52E0A1 (Verde menta) */
+    --accent-foreground: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
 
-    --destructive: 6 79% 57%; /* #E74C3C (Coral) */
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 184 9% 75%; /* Lighter version of Silver Grey */
-    --input: 184 9% 75%; /* Lighter version of Silver Grey */
-    --ring: 168 75% 43%; /* #1ABC9C (Turquoise) */
+    --border: 213 20% 82%; /* Lighter version of #A0AEC0 */
+    --input: 213 20% 82%; /* Lighter version of #A0AEC0 */
+    --ring: 0 100% 71%; /* #FF6B6B (Rosa coral) */
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
-    --sidebar-primary: 168 75% 43%; /* #1ABC9C (Turquoise) */
+    --sidebar-background: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 100% 71%; /* #FF6B6B (Rosa coral) */
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 192 15% 94%; /* #ECF0F1 (Light Cloud) */
-    --sidebar-accent-foreground: 210 29% 24%; /* #2C3E50 (Dark Slate) */
-    --sidebar-border: 184 9% 75%; /* Lighter version of Silver Grey */
-    --sidebar-ring: 168 75% 43%; /* #1ABC9C (Turquoise) */
+    --sidebar-accent: 156 71% 60%; /* #52E0A1 (Verde menta) */
+    --sidebar-accent-foreground: 210 31% 18%; /* #1E2D3D (Azul petróleo) */
+    --sidebar-border: 213 30% 35%; /* Darker version of #A0AEC0 */
+    --sidebar-ring: 0 100% 71%; /* #FF6B6B (Rosa coral) */
   }
 
   /* We won't use dark mode for this project per requirements */
@@ -101,15 +102,15 @@
   }
   
   h1 {
-    @apply text-4xl sm:text-5xl md:text-6xl;
+    @apply text-4xl sm:text-5xl md:text-6xl font-bold;
   }
   
   h2 {
-    @apply text-3xl sm:text-4xl;
+    @apply text-3xl sm:text-4xl font-bold;
   }
   
   h3 {
-    @apply text-2xl sm:text-3xl;
+    @apply text-2xl sm:text-3xl font-bold;
   }
   
   p {
@@ -118,26 +119,7 @@
 }
 
 @layer utilities {
-  .text-darkslate {
-    @apply text-seuclique-darkslate;
-  }
-  
-  .text-silver {
-    @apply text-seuclique-silver;
-  }
-  
-  .bg-lightcloud {
-    @apply bg-seuclique-lightcloud;
-  }
-  
-  .btn-turquoise {
-    @apply bg-seuclique-turquoise hover:bg-seuclique-turquoise/90 text-white font-medium py-2 px-6 rounded-md transition-colors;
-  }
-  
-  .btn-coral {
-    @apply bg-seuclique-coral hover:bg-seuclique-coral/90 text-white font-medium py-2 px-6 rounded-md transition-colors;
-  }
-  
+  /* Base utility classes */
   .section-padding {
     @apply py-16 px-4 sm:px-6 md:py-24 lg:py-32 lg:px-8;
   }
@@ -146,7 +128,58 @@
     @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
   
-  .drop-shadow-light {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  /* New modern classes */
+  .bg-petrol {
+    @apply bg-modern-petrol;
+  }
+  
+  .bg-ice {
+    @apply bg-modern-ice;
+  }
+  
+  .text-coral {
+    @apply text-modern-coral;
+  }
+  
+  .text-petrol {
+    @apply text-modern-petrol;
+  }
+  
+  .text-gray {
+    @apply text-modern-gray;
+  }
+  
+  .btn-coral {
+    @apply bg-modern-coral hover:bg-modern-coral/90 text-white font-medium py-3 px-6 rounded-lg transition-all shadow-sm hover:shadow-md;
+  }
+  
+  .btn-petrol {
+    @apply bg-modern-petrol hover:bg-modern-petrol/90 text-white font-medium py-3 px-6 rounded-lg transition-all shadow-sm hover:shadow-md;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-modern-coral text-modern-coral hover:bg-modern-coral/10 font-medium py-3 px-6 rounded-lg transition-all;
+  }
+
+  /* Animations */
+  .animate-on-scroll {
+    @apply opacity-0;
+  }
+  
+  .animate-on-scroll.visible {
+    @apply opacity-100 transition-all duration-700;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  /* Layout utilities */
+  .grid-gallery {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
   }
 }
