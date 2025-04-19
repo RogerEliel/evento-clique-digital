@@ -121,7 +121,7 @@ const Login = () => {
               </div>
             </div>
             
-            <Button type="submit" disabled={submitting} className="w-full text-gray-950 border border-gray-200 py-6 bg-[#ff6b6b]">
+            <Button type="submit" disabled={submitting} className="w-full border border-gray-200 py-6 bg-[#ff6b6b] text-white">
               {submitting ? 'Entrando...' : 'Entrar'}
             </Button>
             
