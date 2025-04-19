@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -9,28 +8,25 @@ import { Camera, Image, Users, ShieldCheck, Eye, Upload, Check, Clock, Star } fr
 // Observer for scroll animations
 const useIntersectionObserver = () => {
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
         }
       });
-    }, { threshold: 0.1 });
-
+    }, {
+      threshold: 0.1
+    });
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
     animatedElements.forEach(element => observer.observe(element));
-
     return () => {
       animatedElements.forEach(element => observer.unobserve(element));
     };
   }, []);
 };
-
 const Features = () => {
   useIntersectionObserver();
-
-  return (
-    <div className="min-h-screen flex flex-col bg-modern-ice">
+  return <div className="min-h-screen flex flex-col bg-modern-ice">
       <Header />
       
       <main className="flex-grow">
@@ -48,17 +44,13 @@ const Features = () => {
                 <Button className="bg-modern-coral hover:bg-modern-coral/90 text-white py-6 px-8 rounded-lg text-lg">
                   Experimente Grátis
                 </Button>
-                <Button variant="outline" className="border-2 border-white text-white hover:bg-white/10 py-6 px-8 rounded-lg text-lg">
+                <Button variant="outline" className="border-2 border-white py-6 px-8 rounded-lg text-lg bg-slate-50 text-gray-950">
                   Ver Demo
                 </Button>
               </div>
             </div>
             <div className="lg:w-1/2 flex justify-center animate-fade-in">
-              <img 
-                src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
-                alt="Fotógrafo em evento" 
-                className="rounded-xl shadow-2xl object-cover max-h-[500px] w-full"
-              />
+              <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Fotógrafo em evento" className="rounded-xl shadow-2xl object-cover max-h-[500px] w-full" />
             </div>
           </div>
         </section>
@@ -74,24 +66,19 @@ const Features = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  icon: ShieldCheck,
-                  title: "Privacidade Garantida",
-                  description: "Cada convidado acessa apenas as fotos em que aparece, garantindo privacidade e controle total sobre sua imagem."
-                },
-                {
-                  icon: Clock,
-                  title: "Economia de Tempo",
-                  description: "Automatização inteligente que separa e organiza centenas de fotos em minutos, não em horas ou dias."
-                },
-                {
-                  icon: Star,
-                  title: "Experiência Premium",
-                  description: "Interface intuitiva e elegante que valoriza as fotos e proporciona uma experiência memorável aos usuários."
-                }
-              ].map((benefit, index) => (
-                <Card key={index} className="animate-on-scroll card-hover border-none shadow-md">
+              {[{
+              icon: ShieldCheck,
+              title: "Privacidade Garantida",
+              description: "Cada convidado acessa apenas as fotos em que aparece, garantindo privacidade e controle total sobre sua imagem."
+            }, {
+              icon: Clock,
+              title: "Economia de Tempo",
+              description: "Automatização inteligente que separa e organiza centenas de fotos em minutos, não em horas ou dias."
+            }, {
+              icon: Star,
+              title: "Experiência Premium",
+              description: "Interface intuitiva e elegante que valoriza as fotos e proporciona uma experiência memorável aos usuários."
+            }].map((benefit, index) => <Card key={index} className="animate-on-scroll card-hover border-none shadow-md">
                   <CardContent className="p-8">
                     <div className="h-14 w-14 rounded-full bg-modern-coral/10 flex items-center justify-center mb-6">
                       <benefit.icon size={28} className="text-modern-coral" />
@@ -99,8 +86,7 @@ const Features = () => {
                     <h3 className="text-xl font-semibold text-modern-petrol mb-3">{benefit.title}</h3>
                     <p className="text-modern-gray">{benefit.description}</p>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
         </section>
@@ -112,29 +98,23 @@ const Features = () => {
               <div className="lg:w-1/2 order-2 lg:order-1 space-y-6 animate-on-scroll">
                 <h2 className="text-modern-petrol">Para Fotógrafos</h2>
                 <div className="space-y-6">
-                  {[
-                    {
-                      icon: Camera,
-                      title: "Crie sua conta",
-                      description: "Cadastre-se facilmente e configure seu perfil profissional em minutos."
-                    },
-                    {
-                      icon: Upload,
-                      title: "Upload de fotos",
-                      description: "Faça upload das fotos do evento de forma rápida e organizada."
-                    },
-                    {
-                      icon: Users,
-                      title: "IA organiza tudo",
-                      description: "Nossa inteligência artificial reconhece e separa as fotos por convidado automaticamente."
-                    },
-                    {
-                      icon: Check,
-                      title: "Clientes acessam apenas suas fotos",
-                      description: "Cada convidado vê somente as fotos em que aparece, garantindo privacidade."
-                    }
-                  ].map((step, index) => (
-                    <div key={index} className="flex gap-4 items-start">
+                  {[{
+                  icon: Camera,
+                  title: "Crie sua conta",
+                  description: "Cadastre-se facilmente e configure seu perfil profissional em minutos."
+                }, {
+                  icon: Upload,
+                  title: "Upload de fotos",
+                  description: "Faça upload das fotos do evento de forma rápida e organizada."
+                }, {
+                  icon: Users,
+                  title: "IA organiza tudo",
+                  description: "Nossa inteligência artificial reconhece e separa as fotos por convidado automaticamente."
+                }, {
+                  icon: Check,
+                  title: "Clientes acessam apenas suas fotos",
+                  description: "Cada convidado vê somente as fotos em que aparece, garantindo privacidade."
+                }].map((step, index) => <div key={index} className="flex gap-4 items-start">
                       <div className="flex-shrink-0 h-12 w-12 rounded-full bg-modern-petrol flex items-center justify-center">
                         <step.icon size={24} className="text-white" />
                       </div>
@@ -142,8 +122,7 @@ const Features = () => {
                         <h4 className="text-xl font-semibold text-modern-petrol mb-2">{step.title}</h4>
                         <p className="text-modern-gray">{step.description}</p>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
                 <div className="pt-6">
                   <Button className="bg-modern-coral hover:bg-modern-coral/90 text-white">
@@ -152,11 +131,7 @@ const Features = () => {
                 </div>
               </div>
               <div className="lg:w-1/2 order-1 lg:order-2 animate-on-scroll">
-                <img 
-                  src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
-                  alt="Fotógrafo profissional" 
-                  className="rounded-xl shadow-lg object-cover w-full"
-                />
+                <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Fotógrafo profissional" className="rounded-xl shadow-lg object-cover w-full" />
               </div>
             </div>
           </div>
@@ -167,33 +142,24 @@ const Features = () => {
           <div className="responsive-container">
             <div className="flex flex-col lg:flex-row items-center gap-12">
               <div className="lg:w-1/2 animate-on-scroll">
-                <img 
-                  src="https://images.unsplash.com/photo-1528495612343-9ca9f4a4de28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
-                  alt="Convidados em evento" 
-                  className="rounded-xl shadow-lg object-cover w-full"
-                />
+                <img src="https://images.unsplash.com/photo-1528495612343-9ca9f4a4de28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Convidados em evento" className="rounded-xl shadow-lg object-cover w-full" />
               </div>
               <div className="lg:w-1/2 space-y-6 animate-on-scroll">
                 <h2 className="text-modern-petrol">Para Convidados</h2>
                 <div className="space-y-6">
-                  {[
-                    {
-                      icon: Users,
-                      title: "Cadastre-se e envie uma foto sua",
-                      description: "Faça um cadastro simples e envie uma selfie para referência."
-                    },
-                    {
-                      icon: Eye,
-                      title: "Acesse o evento",
-                      description: "Entre no evento através do link compartilhado pelo fotógrafo."
-                    },
-                    {
-                      icon: Image,
-                      title: "Veja e compre as fotos onde você aparece",
-                      description: "Tenha acesso a todas as fotos em que você foi identificado e escolha suas favoritas para comprar."
-                    }
-                  ].map((step, index) => (
-                    <div key={index} className="flex gap-4 items-start">
+                  {[{
+                  icon: Users,
+                  title: "Cadastre-se e envie uma foto sua",
+                  description: "Faça um cadastro simples e envie uma selfie para referência."
+                }, {
+                  icon: Eye,
+                  title: "Acesse o evento",
+                  description: "Entre no evento através do link compartilhado pelo fotógrafo."
+                }, {
+                  icon: Image,
+                  title: "Veja e compre as fotos onde você aparece",
+                  description: "Tenha acesso a todas as fotos em que você foi identificado e escolha suas favoritas para comprar."
+                }].map((step, index) => <div key={index} className="flex gap-4 items-start">
                       <div className="flex-shrink-0 h-12 w-12 rounded-full bg-modern-coral flex items-center justify-center">
                         <step.icon size={24} className="text-white" />
                       </div>
@@ -201,8 +167,7 @@ const Features = () => {
                         <h4 className="text-xl font-semibold text-modern-petrol mb-2">{step.title}</h4>
                         <p className="text-modern-gray">{step.description}</p>
                       </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
                 <div className="pt-6">
                   <Button className="bg-modern-petrol hover:bg-modern-petrol/90 text-white">
@@ -225,13 +190,8 @@ const Features = () => {
             </div>
             
             <div className="grid-gallery animate-on-scroll">
-              {Array(8).fill(null).map((_, index) => (
-                <div key={index} className="overflow-hidden rounded-lg hover-scale">
-                  <img 
-                    src={`https://source.unsplash.com/random/600x400?wedding,event&sig=${index}`}
-                    alt={`Foto de evento ${index + 1}`}
-                    className="w-full h-64 object-cover"
-                  />
+              {Array(8).fill(null).map((_, index) => <div key={index} className="overflow-hidden rounded-lg hover-scale">
+                  <img src={`https://source.unsplash.com/random/600x400?wedding,event&sig=${index}`} alt={`Foto de evento ${index + 1}`} className="w-full h-64 object-cover" />
                   <div className="bg-modern-petrol/90 p-3">
                     <div className="flex justify-between items-center">
                       <span className="font-medium">Fotógrafo {index + 1}</span>
@@ -242,8 +202,7 @@ const Features = () => {
                     </div>
                     <p className="text-sm text-white/70">Casamento • São Paulo</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
             
             <div className="text-center mt-12">
@@ -318,8 +277,6 @@ const Features = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Features;
