@@ -4,7 +4,9 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Camera, Image, Users, ShieldCheck, Star, Upload } from 'lucide-react';
-const HeroSection = () => <section className="bg-gradient-to-br from-modern-petrol to-modern-petrol/90 text-white section-padding min-h-[80vh] flex items-center">
+
+const HeroSection = () => (
+  <section className="bg-gradient-to-br from-modern-petrol to-modern-petrol/90 text-white section-padding min-h-[80vh] flex items-center">
     <div className="responsive-container flex flex-col lg:flex-row items-center justify-between gap-12">
       <div className="lg:w-1/2 space-y-8 animate-fade-in">
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight">
@@ -20,7 +22,10 @@ const HeroSection = () => <section className="bg-gradient-to-br from-modern-petr
             </Button>
           </Link>
           <Link to="/gallery">
-            <Button variant="outline" className="border-2 border-white hover:bg-white/20 py-6 px-8 text-lg w-full sm:w-auto text-gray-950">
+            <Button 
+              variant="outline" 
+              className="border-2 border-white hover:bg-white/20 py-6 px-8 text-lg w-full sm:w-auto text-gray-950"
+            >
               Sou Convidado
             </Button>
           </Link>
@@ -30,7 +35,9 @@ const HeroSection = () => <section className="bg-gradient-to-br from-modern-petr
         <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Fotógrafo em evento" className="rounded-xl shadow-2xl object-cover max-h-[600px] w-full" />
       </div>
     </div>
-  </section>;
+  </section>
+);
+
 const ForGuestsSection = () => <section className="section-padding bg-white">
     <div className="responsive-container">
       <div className="text-center mb-16 animate-on-scroll">
@@ -64,6 +71,7 @@ const ForGuestsSection = () => <section className="section-padding bg-white">
       </div>
     </div>
   </section>;
+
 const ForPhotographersSection = () => <section className="section-padding bg-modern-ice">
     <div className="responsive-container">
       <div className="text-center mb-16 animate-on-scroll">
@@ -101,6 +109,7 @@ const ForPhotographersSection = () => <section className="section-padding bg-mod
       </div>
     </div>
   </section>;
+
 const GallerySection = () => <section className="section-padding bg-modern-petrol text-white">
     <div className="responsive-container">
       <div className="text-center mb-16 animate-on-scroll">
@@ -126,7 +135,9 @@ const GallerySection = () => <section className="section-padding bg-modern-petro
       </div>
     </div>
   </section>;
-const CtaSection = () => <section className="section-padding bg-gradient-to-br from-modern-coral to-modern-coral/80 text-white">
+
+const CtaSection = () => (
+  <section className="section-padding bg-gradient-to-br from-modern-coral to-modern-coral/80 text-white">
     <div className="responsive-container text-center">
       <div className="max-w-3xl mx-auto animate-on-scroll">
         <h2 className="mb-6 leading-tight">Pronto para revolucionar a maneira como você compartilha fotos?</h2>
@@ -135,19 +146,24 @@ const CtaSection = () => <section className="section-padding bg-gradient-to-br f
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link to="/register">
-            <Button className="bg-white text-modern-coral hover:bg-white/90 font-semibold py-6 px-8 text-lg w-full sm:w-auto">
+            <Button className="bg-white text-gray-950 hover:bg-white/90 font-semibold py-6 px-8 text-lg w-full sm:w-auto">
               Começar Agora
             </Button>
           </Link>
           <Link to="/contact">
-            <Button variant="outline" className="border-2 border-white text-white hover:bg-white/10 py-6 px-8 text-lg w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="border-2 border-white text-gray-950 hover:bg-white/10 py-6 px-8 text-lg w-full sm:w-auto"
+            >
               Fale Conosco
             </Button>
           </Link>
         </div>
       </div>
     </div>
-  </section>;
+  </section>
+);
+
 const Footer = () => <footer className="bg-white border-t border-gray-200 py-12">
     <div className="responsive-container">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -190,17 +206,19 @@ const Footer = () => <footer className="bg-white border-t border-gray-200 py-12"
       </div>
     </div>
   </footer>;
+
 const Index = () => {
   return <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-grow">
-        <HeroSection />
-        <ForGuestsSection />
-        <ForPhotographersSection />
-        <GallerySection />
-        <CtaSection />
-      </main>
-      <Footer />
-    </div>;
+    <Header />
+    <main className="flex-grow">
+      <HeroSection />
+      <ForGuestsSection />
+      <ForPhotographersSection />
+      <GallerySection />
+      <CtaSection />
+    </main>
+    <Footer />
+  </div>;
 };
+
 export default Index;

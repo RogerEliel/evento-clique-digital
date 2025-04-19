@@ -152,7 +152,7 @@ const Login = () => {
             
             <Button
               type="submit"
-              className="w-full bg-seuclique-turquoise hover:bg-seuclique-turquoise/90 text-white py-6"
+              className="w-full bg-white text-gray-950 border border-gray-200 hover:bg-gray-100 py-6"
               disabled={submitting}
             >
               {submitting ? 'Entrando...' : 'Entrar'}
