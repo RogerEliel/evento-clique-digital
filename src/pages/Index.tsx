@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Camera, Image, Users, ShieldCheck, Star, Upload } from 'lucide-react';
-
-const HeroSection = () => (
-  <section className="bg-gradient-to-br from-modern-petrol to-modern-petrol/90 text-white section-padding min-h-[80vh] flex items-center">
+const HeroSection = () => <section className="bg-gradient-to-br from-modern-petrol to-modern-petrol/90 text-white section-padding min-h-[80vh] flex items-center">
     <div className="responsive-container flex flex-col lg:flex-row items-center justify-between gap-12">
       <div className="lg:w-1/2 space-y-8 animate-fade-in">
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight">
@@ -18,35 +15,23 @@ const HeroSection = () => (
         </p>
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link to="/register">
-            <Button 
-              className="bg-modern-coral hover:bg-modern-coral/80 text-white py-6 px-8 text-lg w-full sm:w-auto"
-            >
+            <Button className="bg-modern-coral hover:bg-modern-coral/80 text-white py-6 px-8 text-lg w-full sm:w-auto">
               Sou Fotógrafo
             </Button>
           </Link>
           <Link to="/gallery">
-            <Button 
-              variant="outline" 
-              className="border-2 border-white text-white hover:bg-white/20 py-6 px-8 text-lg w-full sm:w-auto"
-            >
+            <Button variant="outline" className="border-2 border-white hover:bg-white/20 py-6 px-8 text-lg w-full sm:w-auto text-gray-950">
               Sou Convidado
             </Button>
           </Link>
         </div>
       </div>
       <div className="lg:w-1/2 animate-fade-in">
-        <img 
-          src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
-          alt="Fotógrafo em evento" 
-          className="rounded-xl shadow-2xl object-cover max-h-[600px] w-full"
-        />
+        <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="Fotógrafo em evento" className="rounded-xl shadow-2xl object-cover max-h-[600px] w-full" />
       </div>
     </div>
-  </section>
-);
-
-const ForGuestsSection = () => (
-  <section className="section-padding bg-white">
+  </section>;
+const ForGuestsSection = () => <section className="section-padding bg-white">
     <div className="responsive-container">
       <div className="text-center mb-16 animate-on-scroll">
         <h2 className="text-modern-petrol mb-4">Como funciona para convidados</h2>
@@ -55,24 +40,19 @@ const ForGuestsSection = () => (
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {[
-          {
-            icon: Users,
-            title: "Cadastre-se",
-            description: "Faça seu cadastro e envie uma foto de referência."
-          },
-          {
-            icon: Image,
-            title: "Acesse o evento",
-            description: "Entre no evento usando o link compartilhado pelo fotógrafo."
-          },
-          {
-            icon: ShieldCheck,
-            title: "Veja suas fotos",
-            description: "Acesse com segurança apenas as fotos em que você aparece."
-          }
-        ].map((step, index) => (
-          <Card key={index} className="animate-on-scroll card-hover border-none shadow-md">
+        {[{
+        icon: Users,
+        title: "Cadastre-se",
+        description: "Faça seu cadastro e envie uma foto de referência."
+      }, {
+        icon: Image,
+        title: "Acesse o evento",
+        description: "Entre no evento usando o link compartilhado pelo fotógrafo."
+      }, {
+        icon: ShieldCheck,
+        title: "Veja suas fotos",
+        description: "Acesse com segurança apenas as fotos em que você aparece."
+      }].map((step, index) => <Card key={index} className="animate-on-scroll card-hover border-none shadow-md">
             <CardContent className="p-8">
               <div className="h-14 w-14 rounded-full bg-modern-coral/10 flex items-center justify-center mb-6">
                 <step.icon size={28} className="text-modern-coral" />
@@ -80,15 +60,11 @@ const ForGuestsSection = () => (
               <h3 className="text-xl font-semibold text-modern-petrol mb-3">{step.title}</h3>
               <p className="text-modern-gray">{step.description}</p>
             </CardContent>
-          </Card>
-        ))}
+          </Card>)}
       </div>
     </div>
-  </section>
-);
-
-const ForPhotographersSection = () => (
-  <section className="section-padding bg-modern-ice">
+  </section>;
+const ForPhotographersSection = () => <section className="section-padding bg-modern-ice">
     <div className="responsive-container">
       <div className="text-center mb-16 animate-on-scroll">
         <h2 className="text-modern-petrol mb-4">Para Fotógrafos</h2>
@@ -97,29 +73,23 @@ const ForPhotographersSection = () => (
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {[
-          {
-            icon: Camera,
-            title: "Crie sua conta",
-            description: "Cadastre-se e configure seu perfil profissional."
-          },
-          {
-            icon: Upload,
-            title: "Upload de fotos",
-            description: "Faça upload das fotos do evento facilmente."
-          },
-          {
-            icon: Image,
-            title: "IA organiza tudo",
-            description: "Nossa IA separa as fotos por convidado automaticamente."
-          },
-          {
-            icon: ShieldCheck,
-            title: "Privacidade garantida",
-            description: "Cada cliente vê apenas suas próprias fotos."
-          }
-        ].map((feature, index) => (
-          <Card key={index} className="animate-on-scroll card-hover border-none shadow-md">
+        {[{
+        icon: Camera,
+        title: "Crie sua conta",
+        description: "Cadastre-se e configure seu perfil profissional."
+      }, {
+        icon: Upload,
+        title: "Upload de fotos",
+        description: "Faça upload das fotos do evento facilmente."
+      }, {
+        icon: Image,
+        title: "IA organiza tudo",
+        description: "Nossa IA separa as fotos por convidado automaticamente."
+      }, {
+        icon: ShieldCheck,
+        title: "Privacidade garantida",
+        description: "Cada cliente vê apenas suas próprias fotos."
+      }].map((feature, index) => <Card key={index} className="animate-on-scroll card-hover border-none shadow-md">
             <CardContent className="p-6">
               <div className="h-12 w-12 rounded-full bg-modern-petrol/10 flex items-center justify-center mb-4">
                 <feature.icon size={24} className="text-modern-petrol" />
@@ -127,15 +97,11 @@ const ForPhotographersSection = () => (
               <h3 className="text-lg font-semibold text-modern-petrol mb-2">{feature.title}</h3>
               <p className="text-modern-gray text-sm">{feature.description}</p>
             </CardContent>
-          </Card>
-        ))}
+          </Card>)}
       </div>
     </div>
-  </section>
-);
-
-const GallerySection = () => (
-  <section className="section-padding bg-modern-petrol text-white">
+  </section>;
+const GallerySection = () => <section className="section-padding bg-modern-petrol text-white">
     <div className="responsive-container">
       <div className="text-center mb-16 animate-on-scroll">
         <h2 className="mb-4">Galeria em Destaque</h2>
@@ -144,13 +110,8 @@ const GallerySection = () => (
         </p>
       </div>
       <div className="grid-gallery animate-on-scroll">
-        {Array(6).fill(null).map((_, index) => (
-          <div key={index} className="overflow-hidden rounded-lg hover-scale">
-            <img 
-              src={`https://source.unsplash.com/random/800x600?wedding,event&sig=${index}`}
-              alt={`Foto de evento ${index + 1}`}
-              className="w-full h-64 object-cover"
-            />
+        {Array(6).fill(null).map((_, index) => <div key={index} className="overflow-hidden rounded-lg hover-scale">
+            <img src={`https://source.unsplash.com/random/800x600?wedding,event&sig=${index}`} alt={`Foto de evento ${index + 1}`} className="w-full h-64 object-cover" />
             <div className="bg-modern-petrol/90 p-3">
               <div className="flex justify-between items-center">
                 <span className="font-medium">Fotógrafo {index + 1}</span>
@@ -161,15 +122,11 @@ const GallerySection = () => (
               </div>
               <p className="text-sm text-white/70">Casamento • São Paulo</p>
             </div>
-          </div>
-        ))}
+          </div>)}
       </div>
     </div>
-  </section>
-);
-
-const CtaSection = () => (
-  <section className="section-padding bg-gradient-to-br from-modern-coral to-modern-coral/80 text-white">
+  </section>;
+const CtaSection = () => <section className="section-padding bg-gradient-to-br from-modern-coral to-modern-coral/80 text-white">
     <div className="responsive-container text-center">
       <div className="max-w-3xl mx-auto animate-on-scroll">
         <h2 className="mb-6 leading-tight">Pronto para revolucionar a maneira como você compartilha fotos?</h2>
@@ -190,11 +147,8 @@ const CtaSection = () => (
         </div>
       </div>
     </div>
-  </section>
-);
-
-const Footer = () => (
-  <footer className="bg-white border-t border-gray-200 py-12">
+  </section>;
+const Footer = () => <footer className="bg-white border-t border-gray-200 py-12">
     <div className="responsive-container">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div>
@@ -235,12 +189,9 @@ const Footer = () => (
         <p>&copy; {new Date().getFullYear()} SeuClique. Todos os direitos reservados.</p>
       </div>
     </div>
-  </footer>
-);
-
+  </footer>;
 const Index = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <HeroSection />
@@ -250,8 +201,6 @@ const Index = () => {
         <CtaSection />
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
