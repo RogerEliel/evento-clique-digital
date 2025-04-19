@@ -206,7 +206,7 @@ const Features = () => {
             </div>
             
             <div className="text-center mt-12">
-              <Button variant="outline" className="border-2 border-white text-white hover:bg-white/10">
+              <Button variant="outline" className="border-2 border-white hover:bg-white/10 text-gray-950">
                 Ver Mais Fotos
               </Button>
             </div>
