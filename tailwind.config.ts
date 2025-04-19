@@ -52,6 +52,14 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Custom Seu Clique color palette
+				seuclique: {
+					darkslate: '#2C3E50',
+					lightcloud: '#ECF0F1',
+					turquoise: '#1ABC9C',
+					coral: '#E74C3C',
+					silver: '#95A5A6',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
