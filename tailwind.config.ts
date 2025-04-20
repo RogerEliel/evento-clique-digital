@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -53,22 +52,6 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Custom Seu Clique color palette (old)
-				seuclique: {
-					darkslate: '#2C3E50',
-					lightcloud: '#ECF0F1',
-					turquoise: '#1ABC9C',
-					coral: '#E74C3C',
-					silver: '#95A5A6',
-				},
-				// New modern palette
-				modern: {
-					petrol: '#1E2D3D',    // Azul petróleo
-					coral: '#FF6B6B',     // Rosa coral
-					ice: '#F7F9FB',       // Branco gelo
-					gray: '#A0AEC0',      // Cinza médio
-					mint: '#52E0A1',      // Verde menta
-				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -101,42 +84,11 @@ export default {
 					to: {
 						height: '0'
 					}
-				},
-				'fade-in': {
-					'0%': {
-						opacity: '0',
-						transform: 'translateY(20px)'
-					},
-					'100%': {
-						opacity: '1',
-						transform: 'translateY(0)'
-					}
-				},
-				'slide-in': {
-					'0%': {
-						transform: 'translateX(-100%)'
-					},
-					'100%': {
-						transform: 'translateX(0)'
-					}
-				},
-				'scale-in': {
-					'0%': {
-						opacity: '0',
-						transform: 'scale(0.95)'
-					},
-					'100%': {
-						opacity: '1',
-						transform: 'scale(1)'
-					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.6s ease-out',
-				'slide-in': 'slide-in 0.5s ease-out',
-				'scale-in': 'scale-in 0.4s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
 		}
 	},
