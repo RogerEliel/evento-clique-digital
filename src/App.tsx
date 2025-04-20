@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Cadastro from "./pages/Cadastro";
 import Login from "./pages/Login";
+import EsqueciSenha from "./pages/EsqueciSenha";
 
 // Create a client for React Query
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/esqueci-senha" element={<EsqueciSenha />} />
           {/* Placeholder para rotas futuras */}
           <Route path="/cadastro-convidado" element={<Cadastro />} /> {/* Temporariamente redireciona para cadastro padrão */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
