@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,24 +13,20 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Lock, User, Shield, Mail, Building, ArrowLeft, ArrowRight } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-
 const registerSchema = z.object({
   nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   email: z.string().email("Email inválido"),
   senha: z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
   empresa: z.string().optional(),
-  consentimento_lgpd: z.boolean().refine((val) => val === true, {
-    message: "Você precisa aceitar os termos de uso e política de privacidade",
-  }),
+  consentimento_lgpd: z.boolean().refine(val => val === true, {
+    message: "Você precisa aceitar os termos de uso e política de privacidade"
+  })
 });
-
 type RegisterForm = z.infer<typeof registerSchema>;
-
 const Cadastro = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formStep, setFormStep] = useState(0);
   const navigate = useNavigate();
-  
   const form = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -39,26 +34,28 @@ const Cadastro = () => {
       email: "",
       senha: "",
       empresa: "",
-      consentimento_lgpd: false,
+      consentimento_lgpd: false
     },
-    mode: "onChange",
+    mode: "onChange"
   });
-
   const onSubmit = async (data: RegisterForm) => {
     try {
       setIsLoading(true);
 
       // Create auth user
-      const { error: authError } = await supabase.auth.signUp({
+      const {
+        error: authError
+      } = await supabase.auth.signUp({
         email: data.email,
-        password: data.senha,
+        password: data.senha
       });
-
       if (authError) throw authError;
 
       // Get client IP
       const ipResponse = await fetch("https://api.ipify.org?format=json");
-      const { ip } = await ipResponse.json();
+      const {
+        ip
+      } = await ipResponse.json();
 
       // Register photographer
       const response = await supabase.functions.invoke("send-confirmation", {
@@ -67,58 +64,50 @@ const Cadastro = () => {
           email: data.email,
           empresa: data.empresa,
           consentimento_lgpd: data.consentimento_lgpd,
-          ip_consentimento: ip,
-        },
+          ip_consentimento: ip
+        }
       });
-
       if (response.error) throw response.error;
-
       toast({
         title: "Cadastro realizado com sucesso!",
-        description: "Verifique seu email para confirmar sua conta.",
+        description: "Verifique seu email para confirmar sua conta."
       });
-
       navigate("/login");
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erro no cadastro",
-        description: error.message,
+        description: error.message
       });
     } finally {
       setIsLoading(false);
     }
   };
-  
   const nextFormStep = async () => {
-    const fieldsToValidate = formStep === 0 
-      ? ['nome', 'email'] 
-      : ['senha', 'consentimento_lgpd'];
-    
+    const fieldsToValidate = formStep === 0 ? ['nome', 'email'] : ['senha', 'consentimento_lgpd'];
     const isValid = await form.trigger(fieldsToValidate as any);
-    
     if (isValid) setFormStep(formStep + 1);
   };
-  
   const prevFormStep = () => {
     setFormStep(formStep - 1);
   };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
-      <motion.div 
-        className="w-full max-w-md"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
+      <motion.div className="w-full max-w-md" initial={{
+      opacity: 0,
+      y: 20
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} transition={{
+      duration: 0.5
+    }}>
         <Link to="/" className="inline-flex items-center text-sm text-gray-600 hover:text-[#FF6B6B] mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para página inicial
         </Link>
 
         <Card className="w-full">
           <CardHeader>
-            <CardTitle className="text-2xl text-center">Cadastro de Fotógrafo</CardTitle>
+            <CardTitle className="text-2xl text-center">Cadastro de Convidado</CardTitle>
             <CardDescription className="text-center">
               Crie sua conta no Seu Clique e comece a mostrar seu trabalho
             </CardDescription>
@@ -136,137 +125,103 @@ const Cadastro = () => {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                {formStep === 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="nome"
-                      render={({ field }) => (
-                        <FormItem>
+                {formStep === 0 && <motion.div initial={{
+                opacity: 0,
+                x: 20
+              }} animate={{
+                opacity: 1,
+                x: 0
+              }} exit={{
+                opacity: 0,
+                x: -20
+              }} transition={{
+                duration: 0.3
+              }}>
+                    <FormField control={form.control} name="nome" render={({
+                  field
+                }) => <FormItem>
                           <FormLabel>
                             Nome completo <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <div className="relative">
                               <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                              <Input 
-                                placeholder="Seu nome completo" 
-                                className="pl-10" 
-                                {...field} 
-                              />
+                              <Input placeholder="Seu nome completo" className="pl-10" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
 
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem className="mt-4">
+                    <FormField control={form.control} name="email" render={({
+                  field
+                }) => <FormItem className="mt-4">
                           <FormLabel>
                             Email <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                              <Input 
-                                type="email" 
-                                placeholder="seu-email@exemplo.com" 
-                                className="pl-10" 
-                                {...field} 
-                              />
+                              <Input type="email" placeholder="seu-email@exemplo.com" className="pl-10" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
 
-                    <FormField
-                      control={form.control}
-                      name="empresa"
-                      render={({ field }) => (
-                        <FormItem className="mt-4">
+                    <FormField control={form.control} name="empresa" render={({
+                  field
+                }) => <FormItem className="mt-4">
                           <FormLabel>
                             Empresa (opcional)
                           </FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                              <Input 
-                                placeholder="Nome da sua empresa (se aplicável)" 
-                                className="pl-10" 
-                                {...field} 
-                              />
+                              <Input placeholder="Nome da sua empresa (se aplicável)" className="pl-10" {...field} />
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
                     
-                    <Button 
-                      type="button" 
-                      onClick={nextFormStep}
-                      className="w-full mt-6 bg-[#FF6B6B] hover:bg-[#FF6B6B]/90"
-                    >
+                    <Button type="button" onClick={nextFormStep} className="w-full mt-6 bg-[#FF6B6B] hover:bg-[#FF6B6B]/90">
                       Próximo <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
-                  </motion.div>
-                )}
+                  </motion.div>}
 
-                {formStep === 1 && (
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <FormField
-                      control={form.control}
-                      name="senha"
-                      render={({ field }) => (
-                        <FormItem>
+                {formStep === 1 && <motion.div initial={{
+                opacity: 0,
+                x: 20
+              }} animate={{
+                opacity: 1,
+                x: 0
+              }} exit={{
+                opacity: 0,
+                x: -20
+              }} transition={{
+                duration: 0.3
+              }}>
+                    <FormField control={form.control} name="senha" render={({
+                  field
+                }) => <FormItem>
                           <FormLabel>
                             Senha <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <div className="relative">
                               <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                              <Input 
-                                type="password" 
-                                placeholder="********" 
-                                className="pl-10" 
-                                {...field} 
-                              />
+                              <Input type="password" placeholder="********" className="pl-10" {...field} />
                             </div>
                           </FormControl>
                           <FormDescription>
                             A senha deve ter pelo menos 8 caracteres
                           </FormDescription>
                           <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
 
-                    <FormField
-                      control={form.control}
-                      name="consentimento_lgpd"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-6">
+                    <FormField control={form.control} name="consentimento_lgpd" render={({
+                  field
+                }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-6">
                           <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
+                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>
@@ -274,30 +229,18 @@ const Cadastro = () => {
                             </FormLabel>
                             <FormMessage />
                           </div>
-                        </FormItem>
-                      )}
-                    />
+                        </FormItem>} />
 
                     <div className="flex gap-2 mt-6">
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={prevFormStep}
-                        className="flex-1"
-                      >
+                      <Button type="button" variant="outline" onClick={prevFormStep} className="flex-1">
                         <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
                       </Button>
                       
-                      <Button 
-                        type="submit" 
-                        className="flex-1 bg-[#FF6B6B] hover:bg-[#FF6B6B]/90" 
-                        disabled={isLoading}
-                      >
+                      <Button type="submit" className="flex-1 bg-[#FF6B6B] hover:bg-[#FF6B6B]/90" disabled={isLoading}>
                         {isLoading ? "Cadastrando..." : "Concluir cadastro"}
                       </Button>
                     </div>
-                  </motion.div>
-                )}
+                  </motion.div>}
               </form>
             </Form>
 
@@ -333,8 +276,6 @@ const Cadastro = () => {
           </CardFooter>
         </Card>
       </motion.div>
-    </div>
-  );
+    </div>;
 };
-
 export default Cadastro;
