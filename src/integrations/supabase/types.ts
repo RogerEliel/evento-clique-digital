@@ -9,7 +9,115 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      confirmation_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          photographer_id: string
+          token: string
+          used: boolean
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          photographer_id: string
+          token: string
+          used?: boolean
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          photographer_id?: string
+          token?: string
+          used?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "confirmation_tokens_photographer_id_fkey"
+            columns: ["photographer_id"]
+            isOneToOne: false
+            referencedRelation: "photographers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photographers: {
+        Row: {
+          consentimento_lgpd: boolean
+          created_at: string
+          email: string
+          empresa: string | null
+          id: string
+          ip_consentimento: string | null
+          is_active: boolean
+          nome: string
+          timestamp_consentimento: string | null
+          updated_at: string
+        }
+        Insert: {
+          consentimento_lgpd?: boolean
+          created_at?: string
+          email: string
+          empresa?: string | null
+          id?: string
+          ip_consentimento?: string | null
+          is_active?: boolean
+          nome: string
+          timestamp_consentimento?: string | null
+          updated_at?: string
+        }
+        Update: {
+          consentimento_lgpd?: boolean
+          created_at?: string
+          email?: string
+          empresa?: string | null
+          id?: string
+          ip_consentimento?: string | null
+          is_active?: boolean
+          nome?: string
+          timestamp_consentimento?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      refresh_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          is_revoked: boolean
+          photographer_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          is_revoked?: boolean
+          photographer_id: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_revoked?: boolean
+          photographer_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refresh_tokens_photographer_id_fkey"
+            columns: ["photographer_id"]
+            isOneToOne: false
+            referencedRelation: "photographers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
