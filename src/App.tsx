@@ -9,9 +9,7 @@ import NotFound from "./pages/NotFound";
 import Cadastro from "./pages/Cadastro";
 import Login from "./pages/Login";
 
-// Instalação do framer-motion para as animações
-<lov-add-dependency>framer-motion@10.19.3</lov-add-dependency>
-
+// Create a client for React Query
 const queryClient = new QueryClient();
 
 const App = () => (
