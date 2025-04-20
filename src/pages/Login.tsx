@@ -1,91 +1,114 @@
-
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Camera, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
+import { motion } from "framer-motion";
+
+const loginSchema = z.object({
+  email: z.string().email("Email inválido"),
+  senha: z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Login logic will be implemented later
-    console.log("Login attempt with:", { email, password });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      senha: "",
+    },
+  });
+
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      setIsLoading(true);
+
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.senha,
+      });
+
+      if (authError) throw authError;
+
+      toast({
+        title: "Login realizado!",
+        description: "Você será redirecionado.",
+      });
+
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro no login",
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F9FB] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="flex justify-center mb-6">
-            <Link to="/" className="flex items-center gap-2">
-              <Camera className="w-6 h-6 text-[#1E2D3D]" />
-              <span className="font-semibold text-xl text-[#1E2D3D]">Seu Clique</span>
-            </Link>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-lg shadow-md">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold">Login</h2>
+          <p className="text-gray-600 mt-2">Entre na sua conta</p>
+        </div>
 
-          <h1 className="text-2xl font-bold text-[#1E2D3D] text-center mb-6">Entrar na sua conta</h1>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="border-[#A0AEC0]/30 focus-visible:ring-[#FF6B6B]"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
-                <Link to="/esqueci-senha" className="text-sm text-[#FF6B6B] hover:underline">
-                  Esqueceu a senha?
-                </Link>
-              </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="border-[#A0AEC0]/30 focus-visible:ring-[#FF6B6B]"
-              />
-            </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full bg-[#FF6B6B] hover:bg-[#FF6B6B]/90 text-white"
-            >
-              Entrar
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="senha"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
+        </Form>
 
-          <div className="mt-6 pt-6 border-t border-[#A0AEC0]/20 text-center">
-            <p className="text-[#A0AEC0]">
-              Ainda não tem uma conta?{" "}
-              <Link to="/cadastro" className="text-[#FF6B6B] hover:underline inline-flex items-center">
-                <span>Cadastre-se</span>
-                <ArrowRight className="ml-1 w-3 h-3" />
-              </Link>
-            </p>
-          </div>
+        <div className="text-center">
+          <p className="text-sm text-gray-500">
+            Não tem uma conta?{" "}
+            <Link to="/cadastro" className="text-blue-500 hover:underline">
+              Cadastre-se
+            </Link>
+          </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
