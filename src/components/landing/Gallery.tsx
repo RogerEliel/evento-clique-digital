@@ -40,12 +40,11 @@ const Gallery = () => {
               key={index}
               className="relative overflow-hidden rounded-lg shadow-md cursor-pointer group"
               whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setSelectedImage(src)}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              onClick={() => setSelectedImage(src)}
             >
               <img
                 src={src}
