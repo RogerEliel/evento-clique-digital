@@ -77,6 +77,41 @@ export type Database = {
         }
         Relationships: []
       }
+      guests: {
+        Row: {
+          created_at: string
+          email: string
+          event_id: string
+          id: string
+          invited_at: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_id: string
+          id?: string
+          invited_at?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_id?: string
+          id?: string
+          invited_at?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       photographers: {
         Row: {
           consentimento_lgpd: boolean
