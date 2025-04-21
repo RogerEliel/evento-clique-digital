@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarPlus, Edit, Eye, Loader, MoreHorizontal, Search, Trash2 } from 'lucide-react';
@@ -49,7 +48,12 @@ export default function EventsPage() {
   });
 
   const createEventMutation = useMutation({
-    mutationFn: eventsService.createEvent,
+    mutationFn: (data: EventFormValues) => eventsService.createEvent({
+      name: data.name,
+      date: data.date,
+      location: data.location,
+      description: data.description,
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       setCreateDialogOpen(false);
@@ -126,14 +130,7 @@ export default function EventsPage() {
   };
 
   const onSubmit = (data: EventFormValues) => {
-    // Garantimos que name e date são fornecidos, conforme exigido pela API
-    const eventData = {
-      name: data.name, // name é obrigatório
-      date: data.date, // date é obrigatório
-      location: data.location,
-      description: data.description,
-    };
-    createEventMutation.mutate(eventData);
+    createEventMutation.mutate(data);
   };
 
   return (
