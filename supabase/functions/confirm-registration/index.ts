@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.8";
 
@@ -20,7 +19,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { token } = await req.json();
 
-    // Validate token
+    // Buscar o token válido e ainda não usado
     const { data: tokenData, error: tokenError } = await supabase
       .from("confirmation_tokens")
       .select("*, photographers(*)")
@@ -29,28 +28,41 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (tokenError || !tokenData) {
-      throw new Error("Token inválido ou expirado");
+      return new Response(
+        JSON.stringify({ error: "Token inválido ou já utilizado." }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
+    // Verificar expiração
     if (new Date(tokenData.expires_at) < new Date()) {
-      throw new Error("Token expirado");
+      return new Response(
+        JSON.stringify({ error: "Token expirado." }),
+        { status: 410, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
-    // Mark token as used
+    // Marcar token como usado
     const { error: updateTokenError } = await supabase
       .from("confirmation_tokens")
       .update({ used: true })
       .eq("id", tokenData.id);
 
-    if (updateTokenError) throw updateTokenError;
+    if (updateTokenError) {
+      console.error("Erro ao atualizar o token:", updateTokenError);
+      throw new Error("Erro ao atualizar o token.");
+    }
 
-    // Activate photographer account
+    // Ativar conta do fotógrafo
     const { error: activateError } = await supabase
       .from("photographers")
       .update({ is_active: true })
       .eq("id", tokenData.photographer_id);
 
-    if (activateError) throw activateError;
+    if (activateError) {
+      console.error("Erro ao ativar conta:", activateError);
+      throw new Error("Erro ao ativar a conta.");
+    }
 
     return new Response(
       JSON.stringify({ message: "Conta ativada com sucesso!" }),
@@ -63,11 +75,14 @@ const handler = async (req: Request): Promise<Response> => {
       }
     );
   } catch (error: any) {
-    console.error("Error in confirmation process:", error);
+    console.error("Erro no processo de confirmação:", error);
+
+    const statusCode = error.code === "23505" ? 409 : 500;
+
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || "Erro interno no servidor." }),
       {
-        status: 500,
+        status: statusCode,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
