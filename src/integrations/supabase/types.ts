@@ -44,6 +44,39 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          location: string | null
+          name: string
+          photographer_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          photographer_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          photographer_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       photographers: {
         Row: {
           consentimento_lgpd: boolean
@@ -82,6 +115,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      photos: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          metadata: Json | null
+          storage_path: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          metadata?: Json | null
+          storage_path: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          metadata?: Json | null
+          storage_path?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       refresh_tokens: {
         Row: {

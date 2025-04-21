@@ -1,81 +1,72 @@
-
 import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarPlus, Edit, Eye, Loader, MoreHorizontal, Search, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { eventsService } from '@/services/events';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-// Mock data for events
-const mockEvents = [
-  { 
-    id: '1', 
-    name: 'Casamento João e Maria', 
-    date: '2023-10-15', 
-    status: 'active',
-    location: 'Buffet Solar',
-    clients: 120
-  },
-  { 
-    id: '2', 
-    name: 'Aniversário 15 Anos - Ana', 
-    date: '2023-11-20', 
-    status: 'active',
-    location: 'Casa de Festas Vale Verde',
-    clients: 85
-  },
-  { 
-    id: '3', 
-    name: 'Formatura Eng. Civil UFPR', 
-    date: '2023-12-12', 
-    status: 'pending',
-    location: 'Centro de Eventos Barigui',
-    clients: 200
-  },
-  { 
-    id: '4', 
-    name: 'Corporate Meeting - Startup X', 
-    date: '2023-08-05', 
-    status: 'completed',
-    location: 'Hotel Business Plaza',
-    clients: 45
-  },
-  { 
-    id: '5', 
-    name: 'Festival de Música Indie', 
-    date: '2023-07-22', 
-    status: 'completed',
-    location: 'Parque das Águas',
-    clients: 320
-  },
-];
+const eventFormSchema = z.object({
+  name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida'),
+  location: z.string().optional(),
+  description: z.string().optional(),
+});
 
 export default function EventsPage() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [events, setEvents] = useState(mockEvents);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof eventFormSchema>>({
+    resolver: zodResolver(eventFormSchema),
+    defaultValues: {
+      name: '',
+      date: new Date().toISOString().split('T')[0],
+      location: '',
+      description: '',
+    },
+  });
+
+  const { data: events = [], isLoading } = useQuery({
+    queryKey: ['events'],
+    queryFn: eventsService.listEvents,
+  });
+
+  const createEventMutation = useMutation({
+    mutationFn: eventsService.createEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      setCreateDialogOpen(false);
+      form.reset();
+      toast({
+        title: "Evento criado",
+        description: "O evento foi criado com sucesso.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao criar evento",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const filteredEvents = events.filter(event =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    event.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     new Date(event.date).toLocaleDateString('pt-BR').includes(searchTerm)
   );
 
@@ -83,46 +74,8 @@ export default function EventsPage() {
     return new Date(dateStr).toLocaleDateString('pt-BR');
   };
 
-  const handleDeleteClick = (event: any) => {
-    setSelectedEvent(event);
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = async () => {
-    setIsLoading(true);
-    
-    try {
-      // Mock delete - to be replaced with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setEvents(events.filter(e => e.id !== selectedEvent.id));
-      toast({
-        title: "Evento excluído",
-        description: `O evento "${selectedEvent.name}" foi excluído com sucesso.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Erro ao excluir",
-        description: "Não foi possível excluir o evento.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-      setDeleteDialogOpen(false);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-[#52E0A1] hover:bg-[#52E0A1]/80 text-[#1E2D3D]">Ativo</Badge>;
-      case 'pending':
-        return <Badge variant="outline" className="text-amber-500 border-amber-500">Pendente</Badge>;
-      case 'completed':
-        return <Badge variant="secondary">Concluído</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
+  const onSubmit = (data: z.infer<typeof eventFormSchema>) => {
+    createEventMutation.mutate(data);
   };
 
   return (
@@ -132,7 +85,10 @@ export default function EventsPage() {
           <h1 className="text-2xl font-bold tracking-tight">Eventos</h1>
           <p className="text-muted-foreground">Gerencie todos seus eventos fotográficos</p>
         </div>
-        <Button className="bg-[#FF6B6B] hover:bg-[#FF6B6B]/90">
+        <Button 
+          className="bg-[#FF6B6B] hover:bg-[#FF6B6B]/90"
+          onClick={() => setCreateDialogOpen(true)}
+        >
           <CalendarPlus className="mr-2 h-4 w-4" /> Novo evento
         </Button>
       </div>
@@ -206,7 +162,97 @@ export default function EventsPage() {
         </Table>
       </div>
       
-      {/* Delete Confirmation Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Criar novo evento</DialogTitle>
+            <DialogDescription>
+              Preencha os dados do evento para criar um novo álbum de fotos.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do evento</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Casamento João e Maria" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Data</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Local</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Buffet Solar" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Descrição do evento (opcional)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit"
+                  className="bg-[#52E0A1] hover:bg-[#52E0A1]/90 text-[#1E2D3D]"
+                  disabled={createEventMutation.isPending}
+                >
+                  {createEventMutation.isPending ? (
+                    <>
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      Criando...
+                    </>
+                  ) : (
+                    'Criar evento'
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
