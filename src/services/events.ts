@@ -16,10 +16,16 @@ export const eventsService = {
     return data;
   },
 
-  async createEvent(event: Omit<Event, "id" | "photographer_id" | "created_at" | "updated_at">) {
+  async createEvent(event: { name: string; date: string; location?: string; description?: string }) {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) throw new Error("Not authenticated");
+
     const { data, error } = await supabase
       .from("events")
-      .insert(event)
+      .insert({
+        ...event,
+        photographer_id: user.id
+      })
       .select()
       .single();
 

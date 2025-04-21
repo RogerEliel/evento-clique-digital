@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarPlus, Edit, Eye, Loader, MoreHorizontal, Search, Trash2 } from 'lucide-react';
@@ -21,6 +22,8 @@ const eventFormSchema = z.object({
   description: z.string().optional(),
 });
 
+type EventFormValues = z.infer<typeof eventFormSchema>;
+
 export default function EventsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -29,7 +32,7 @@ export default function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof eventFormSchema>>({
+  const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
       name: '',
@@ -64,6 +67,29 @@ export default function EventsPage() {
     },
   });
 
+  const deleteEventMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("events").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      setDeleteDialogOpen(false);
+      setSelectedEvent(null);
+      toast({
+        title: "Evento excluído",
+        description: "O evento foi excluído com sucesso.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir evento",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
   const filteredEvents = events.filter(event =>
     event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,7 +100,31 @@ export default function EventsPage() {
     return new Date(dateStr).toLocaleDateString('pt-BR');
   };
 
-  const onSubmit = (data: z.infer<typeof eventFormSchema>) => {
+  const getStatusBadge = (date: string) => {
+    const eventDate = new Date(date);
+    const today = new Date();
+    
+    if (eventDate > today) {
+      return <Badge className="bg-green-500">Próximo</Badge>;
+    } else if (eventDate.toDateString() === today.toDateString()) {
+      return <Badge className="bg-amber-500">Hoje</Badge>;
+    } else {
+      return <Badge variant="outline">Realizado</Badge>;
+    }
+  };
+  
+  const handleDeleteClick = (event: any) => {
+    setSelectedEvent(event);
+    setDeleteDialogOpen(true);
+  };
+  
+  const confirmDelete = () => {
+    if (selectedEvent) {
+      deleteEventMutation.mutate(selectedEvent.id);
+    }
+  };
+
+  const onSubmit = (data: EventFormValues) => {
     createEventMutation.mutate(data);
   };
 
@@ -112,7 +162,6 @@ export default function EventsPage() {
               <TableHead>Nome</TableHead>
               <TableHead>Data</TableHead>
               <TableHead>Local</TableHead>
-              <TableHead>Convidados</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="w-[100px]">Ações</TableHead>
             </TableRow>
@@ -123,9 +172,8 @@ export default function EventsPage() {
                 <TableRow key={event.id}>
                   <TableCell className="font-medium">{event.name}</TableCell>
                   <TableCell>{formatDate(event.date)}</TableCell>
-                  <TableCell>{event.location}</TableCell>
-                  <TableCell>{event.clients}</TableCell>
-                  <TableCell>{getStatusBadge(event.status)}</TableCell>
+                  <TableCell>{event.location || '-'}</TableCell>
+                  <TableCell>{getStatusBadge(event.date)}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -153,7 +201,7 @@ export default function EventsPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   Nenhum evento encontrado.
                 </TableCell>
               </TableRow>
@@ -266,16 +314,16 @@ export default function EventsPage() {
             <Button 
               variant="outline" 
               onClick={() => setDeleteDialogOpen(false)}
-              disabled={isLoading}
+              disabled={deleteEventMutation.isPending}
             >
               Cancelar
             </Button>
             <Button 
               variant="destructive" 
               onClick={confirmDelete}
-              disabled={isLoading}
+              disabled={deleteEventMutation.isPending}
             >
-              {isLoading ? (
+              {deleteEventMutation.isPending ? (
                 <>
                   <Loader className="mr-2 h-4 w-4 animate-spin" /> 
                   Excluindo...
@@ -293,3 +341,4 @@ export default function EventsPage() {
     </div>
   );
 }
+

@@ -5,6 +5,7 @@ import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Progress } from '@/components/ui/progress';
+import { eventsService } from '@/services/events';
 
 interface PhotoUploaderProps {
   eventId: string;
