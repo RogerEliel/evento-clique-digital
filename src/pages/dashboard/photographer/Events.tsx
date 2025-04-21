@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { supabase } from "@/integrations/supabase/client";
 
 const eventFormSchema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
@@ -125,7 +126,14 @@ export default function EventsPage() {
   };
 
   const onSubmit = (data: EventFormValues) => {
-    createEventMutation.mutate(data);
+    // Garantimos que name e date são fornecidos, conforme exigido pela API
+    const eventData = {
+      name: data.name, // name é obrigatório
+      date: data.date, // date é obrigatório
+      location: data.location,
+      description: data.description,
+    };
+    createEventMutation.mutate(eventData);
   };
 
   return (
@@ -341,4 +349,3 @@ export default function EventsPage() {
     </div>
   );
 }
-
