@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { guestsService } from '@/services/guests';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { supabase } from "@/integrations/supabase/client";
 
 interface GuestsListProps {
   eventId: string;
@@ -43,6 +44,29 @@ export function GuestsList({ eventId }: GuestsListProps) {
     }
   });
 
+  const sendInviteMutation = useMutation({
+    mutationFn: async (guestId: string) => {
+      const { error } = await supabase.functions.invoke('send-guest-invite', {
+        body: { guest_id: guestId },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['guests', eventId] });
+      toast({
+        title: "Convite enviado",
+        description: "O convite foi enviado com sucesso.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro ao enviar convite",
+        description: "Não foi possível enviar o convite.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleDeleteGuest = (guest: any) => {
     setSelectedGuest(guest);
     setDeleteDialogOpen(true);
@@ -61,6 +85,7 @@ export function GuestsList({ eventId }: GuestsListProps) {
           <TableRow>
             <TableHead>Nome</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Status do Convite</TableHead>
             <TableHead>Data do Convite</TableHead>
             <TableHead className="w-[100px]">Ações</TableHead>
           </TableRow>
@@ -70,6 +95,9 @@ export function GuestsList({ eventId }: GuestsListProps) {
             <TableRow key={guest.id}>
               <TableCell>{guest.name}</TableCell>
               <TableCell>{guest.email}</TableCell>
+              <TableCell>
+                {guest.invited_at ? 'Enviado' : 'Pendente'}
+              </TableCell>
               <TableCell>
                 {guest.invited_at 
                   ? format(new Date(guest.invited_at), 'dd/MM/yyyy HH:mm') 
@@ -88,8 +116,13 @@ export function GuestsList({ eventId }: GuestsListProps) {
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon">
-                    <Mail className="h-4 w-4" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => sendInviteMutation.mutate(guest.id)}
+                    disabled={sendInviteMutation.isPending}
+                  >
+                    <Mail className={`h-4 w-4 ${guest.invited_at ? 'text-green-500' : ''}`} />
                   </Button>
                 </div>
               </TableCell>
