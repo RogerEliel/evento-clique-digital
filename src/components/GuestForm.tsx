@@ -10,7 +10,9 @@ import { Input } from '@/components/ui/input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { guestsService } from '@/services/guests';
 import { useToast } from '@/hooks/use-toast';
+import { Guest, GuestInsert } from '@/services/guests'; // Import the types
 
+// Update the zod schema to ensure non-empty strings
 const guestFormSchema = z.object({
   name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
   email: z.string().email('E-mail inválido'),
@@ -22,7 +24,7 @@ interface GuestFormProps {
   eventId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  guest?: any; // Replace with actual guest type
+  guest?: Guest; // Use the Guest type from the service
 }
 
 export function GuestForm({ eventId, isOpen, onOpenChange, guest }: GuestFormProps) {
@@ -39,8 +41,14 @@ export function GuestForm({ eventId, isOpen, onOpenChange, guest }: GuestFormPro
 
   const guestMutation = useMutation({
     mutationFn: guest 
-      ? (data: GuestFormValues) => guestsService.updateGuest(guest.id, { ...data, event_id: eventId })
-      : (data: GuestFormValues) => guestsService.createGuest({ ...data, event_id: eventId }),
+      ? (data: GuestFormValues) => guestsService.updateGuest(guest.id, { 
+          ...data, 
+          event_id: eventId 
+        } as GuestInsert)
+      : (data: GuestFormValues) => guestsService.createGuest({ 
+          ...data, 
+          event_id: eventId 
+        } as GuestInsert),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['guests', eventId] });
       onOpenChange(false);
