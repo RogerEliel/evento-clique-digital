@@ -79,6 +79,7 @@ export type Database = {
       }
       guests: {
         Row: {
+          access_token: string | null
           created_at: string
           email: string
           event_id: string
@@ -87,6 +88,7 @@ export type Database = {
           name: string
         }
         Insert: {
+          access_token?: string | null
           created_at?: string
           email: string
           event_id: string
@@ -95,6 +97,7 @@ export type Database = {
           name: string
         }
         Update: {
+          access_token?: string | null
           created_at?: string
           email?: string
           event_id?: string
@@ -226,7 +229,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_event_by_guest_token: {
+        Args: { token: string }
+        Returns: {
+          event_id: string
+          event_name: string
+          event_date: string
+          event_location: string
+          event_description: string
+          guest_name: string
+        }[]
+      }
+      get_photos_by_guest_token: {
+        Args: { token: string }
+        Returns: {
+          photo_id: string
+          photo_url: string
+          photo_created_at: string
+        }[]
+      }
+      set_guest_token: {
+        Args: { token: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

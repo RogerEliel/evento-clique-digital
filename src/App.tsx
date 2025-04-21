@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -69,6 +69,9 @@ const App = () => (
             <Route path="my-gallery" element={<MyGalleryPage />} />
             <Route path="profile" element={<ClientProfilePage />} />
           </Route>
+          
+          {/* Add the gallery route */}
+          <Route path="/gallery/:token" element={<GalleryPage />} />
           
           {/* Catch-all route for 404 */}
           <Route path="*" element={<NotFound />} />
