@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.create-subscription-session]
 verify_jwt = false
+
+[functions.check-subscription-status]
+verify_jwt = false

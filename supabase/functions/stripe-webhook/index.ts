@@ -42,71 +42,23 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session;
+    // Handle different event types
+    switch (event.type) {
+      case "checkout.session.completed":
+        await handleCheckoutSessionCompleted(event.data.object, stripe, supabaseAdmin);
+        break;
       
-      console.log("Processing successful checkout session:", session.id);
-
-      // Update order status to paid
-      const { error: orderError } = await supabaseAdmin
-        .from("orders")
-        .update({ status: "paid" })
-        .eq("stripe_session_id", session.id);
-
-      if (orderError) {
-        console.error("Error updating order status:", orderError);
-        throw orderError;
-      }
-
-      // Get the order details
-      const { data: orderData, error: orderFetchError } = await supabaseAdmin
-        .from("orders")
-        .select("id")
-        .eq("stripe_session_id", session.id)
-        .single();
-
-      if (orderFetchError || !orderData) {
-        console.error("Error fetching order:", orderFetchError);
-        throw orderFetchError || new Error("Order not found");
-      }
-
-      // Fetch line items from Stripe
-      const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-
-      // Process each line item
-      for (const item of lineItems.data) {
-        if (!item.price?.unit_amount) continue;
-
-        // Extract photo ID from the product name (format: "Photo {photoId}")
-        const photoId = item.description?.split(" ")[1];
-        if (!photoId) continue;
-
-        // Check if order item already exists to avoid duplicates
-        const { data: existingItem } = await supabaseAdmin
-          .from("order_items")
-          .select("id")
-          .eq("order_id", orderData.id)
-          .eq("photo_id", photoId)
-          .maybeSingle();
-
-        if (!existingItem) {
-          const { error: itemError } = await supabaseAdmin
-            .from("order_items")
-            .insert({
-              order_id: orderData.id,
-              photo_id: photoId,
-              unit_price: item.price.unit_amount,
-              quantity: item.quantity || 1,
-            });
-
-          if (itemError) {
-            console.error("Error inserting order item:", itemError);
-            throw itemError;
-          }
-        }
-      }
-
-      console.log("Successfully processed order:", orderData.id);
+      case "customer.subscription.created":
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted":
+        // Log subscription events - we'll use the check-subscription-status edge function 
+        // to query subscription status directly from Stripe when needed
+        console.log(`Subscription event received: ${event.type}`);
+        console.log(JSON.stringify(event.data.object, null, 2));
+        break;
+        
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -124,3 +76,69 @@ serve(async (req) => {
     );
   }
 });
+
+// Process checkout.session.completed event
+async function handleCheckoutSessionCompleted(session, stripe, supabaseAdmin) {
+  console.log("Processing successful checkout session:", session.id);
+
+  // Update order status to paid
+  const { error: orderError } = await supabaseAdmin
+    .from("orders")
+    .update({ status: "paid" })
+    .eq("stripe_session_id", session.id);
+
+  if (orderError) {
+    console.error("Error updating order status:", orderError);
+    throw orderError;
+  }
+
+  // Get the order details
+  const { data: orderData, error: orderFetchError } = await supabaseAdmin
+    .from("orders")
+    .select("id")
+    .eq("stripe_session_id", session.id)
+    .single();
+
+  if (orderFetchError || !orderData) {
+    console.error("Error fetching order:", orderFetchError);
+    throw orderFetchError || new Error("Order not found");
+  }
+
+  // Fetch line items from Stripe
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+
+  // Process each line item
+  for (const item of lineItems.data) {
+    if (!item.price?.unit_amount) continue;
+
+    // Extract photo ID from the product name (format: "Photo {photoId}")
+    const photoId = item.description?.split(" ")[1];
+    if (!photoId) continue;
+
+    // Check if order item already exists to avoid duplicates
+    const { data: existingItem } = await supabaseAdmin
+      .from("order_items")
+      .select("id")
+      .eq("order_id", orderData.id)
+      .eq("photo_id", photoId)
+      .maybeSingle();
+
+    if (!existingItem) {
+      const { error: itemError } = await supabaseAdmin
+        .from("order_items")
+        .insert({
+          order_id: orderData.id,
+          photo_id: photoId,
+          unit_price: item.price.unit_amount,
+          quantity: item.quantity || 1,
+        });
+
+      if (itemError) {
+        console.error("Error inserting order item:", itemError);
+        throw itemError;
+      }
+    }
+  }
+
+  console.log("Successfully processed order:", orderData.id);
+}

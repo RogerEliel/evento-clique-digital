@@ -79,25 +79,21 @@ export default function SubscriptionPage() {
     }
   ];
 
-  // Fetch the current subscription
-  const { data: subscription, isLoading: isLoadingSubscription, refetch } = useQuery({
+  // Fetch the current subscription using our edge function
+  const { data: subscriptionData, isLoading: isLoadingSubscription, refetch } = useQuery({
     queryKey: ["photographer-subscription"],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
         navigate('/dashboard/login');
-        return null;
+        return { hasSubscription: false, subscription: null };
       }
       
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
-
+      const { data, error } = await supabase.functions.invoke('check-subscription-status');
+      
       if (error) throw error;
-      return data as Subscription | null;
+      return data;
     },
   });
 
@@ -185,11 +181,12 @@ export default function SubscriptionPage() {
   };
 
   const getCurrentPlan = () => {
-    if (!subscription?.price_id) return null;
-    return plans.find(plan => plan.priceId === subscription.price_id);
+    if (!subscriptionData?.hasSubscription || !subscriptionData?.subscription?.price_id) return null;
+    return plans.find(plan => plan.priceId === subscriptionData.subscription.price_id);
   };
 
   const currentPlan = getCurrentPlan();
+  const subscription = subscriptionData?.subscription;
 
   if (isLoadingSubscription) {
     return (
@@ -213,7 +210,7 @@ export default function SubscriptionPage() {
         </p>
       </div>
 
-      {subscription && subscription.status === 'active' && (
+      {subscriptionData?.hasSubscription && subscription?.status === 'active' && (
         <div className="bg-muted p-4 rounded-lg mb-8 border">
           <div className="flex items-center justify-between">
             <div>
@@ -234,7 +231,8 @@ export default function SubscriptionPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {plans.map((plan) => {
-          const isCurrentPlan = subscription?.price_id === plan.priceId;
+          const isCurrentPlan = subscriptionData?.hasSubscription && 
+            subscription?.price_id === plan.priceId;
           
           return (
             <Card key={plan.id} className={`${isCurrentPlan ? 'border-primary' : ''}`}>
