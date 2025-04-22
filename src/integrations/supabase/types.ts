@@ -115,6 +115,89 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string | null
+          photo_id: string | null
+          quantity: number | null
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          photo_id?: string | null
+          quantity?: number | null
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          photo_id?: string | null
+          quantity?: number | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          currency: string | null
+          guest_id: string | null
+          id: string
+          photographer_id: string | null
+          status: string | null
+          stripe_session_id: string | null
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          guest_id?: string | null
+          id?: string
+          photographer_id?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          guest_id?: string | null
+          id?: string
+          photographer_id?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       photographers: {
         Row: {
           consentimento_lgpd: boolean
