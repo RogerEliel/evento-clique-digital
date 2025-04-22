@@ -1,1 +1,5 @@
+
 project_id = "dnhdqhvvsefxzcejlkrq"
+
+[functions.get-guest-photos]
+verify_jwt = false
