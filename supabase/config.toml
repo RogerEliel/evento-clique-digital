@@ -9,3 +9,6 @@ verify_jwt = false
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.create-subscription-session]
+verify_jwt = false

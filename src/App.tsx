@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -24,6 +25,7 @@ import EventsPage from "./pages/dashboard/photographer/Events";
 import GalleryPage from "./pages/dashboard/photographer/Gallery";
 import ClientsPage from "./pages/dashboard/photographer/Clients";
 import ProfilePage from "./pages/dashboard/photographer/Profile";
+import SubscriptionPage from "./pages/dashboard/photographer/Subscription";
 
 // Client dashboard pages
 import MyEventsPage from "./pages/dashboard/client/MyEvents";
@@ -60,6 +62,7 @@ const App = () => (
             <Route path="gallery" element={<GalleryPage />} />
             <Route path="clients" element={<ClientsPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="subscription" element={<SubscriptionPage />} />
           </Route>
           
           {/* Client dashboard routes */}

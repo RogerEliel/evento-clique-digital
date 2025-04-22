@@ -1,7 +1,7 @@
 
 import { ReactNode, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, CreditCard } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarContent, 
@@ -46,6 +46,7 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
     { title: 'Eventos', href: '/dashboard/photographer/events', icon: 'calendar' },
     { title: 'Galeria', href: '/dashboard/photographer/gallery', icon: 'gallery-horizontal' },
     { title: 'Clientes', href: '/dashboard/photographer/clients', icon: 'users' },
+    { title: 'Assinatura', href: '/dashboard/photographer/subscription', icon: 'credit-card' },
     { title: 'Meu Perfil', href: '/dashboard/photographer/profile', icon: 'user' }
   ];
 
@@ -81,6 +82,7 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
                         {item.icon === 'gallery-horizontal' && <span className="mr-2"><GalleryHorizontal /></span>}
                         {item.icon === 'users' && <span className="mr-2"><Users /></span>}
                         {item.icon === 'user' && <span className="mr-2"><User /></span>}
+                        {item.icon === 'credit-card' && <span className="mr-2"><CreditCard /></span>}
                         {item.title}
                       </a>
                     </SidebarMenuButton>
