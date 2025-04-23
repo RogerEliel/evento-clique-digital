@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Index from './pages/Index';
 import Cadastro from './pages/Cadastro';
 import Login from './pages/Login';
@@ -25,6 +25,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { PhotographerDashboard } from './pages/dashboard/photographer/Index';
 import ReportsPage from './pages/dashboard/photographer/Reports';
 import Settings from './pages/dashboard/photographer/Settings';
+import PrivateRoute from './components/PrivateRoute'; // Novo componente de rota protegida
 
 function App() {
   return (
@@ -35,14 +36,21 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/gallery/:token" element={<PublicGalleryPage />} />
-        
+
         <Route path="/dashboard">
           <Route index element={<DashboardIndex />} />
           <Route path="login" element={<DashboardLogin />} />
           <Route path="register" element={<DashboardRegister />} />
           <Route path="esqueci-senha" element={<DashboardForgotPassword />} />
-          
-          <Route path="photographer" element={<DashboardLayout userType="photographer" />}>
+
+          <Route
+            path="photographer"
+            element={
+              <PrivateRoute userType="photographer">
+                <DashboardLayout userType="photographer" />
+              </PrivateRoute>
+            }
+          >
             <Route index element={<PhotographerDashboard />} />
             <Route path="events" element={<EventsPage />} />
             <Route path="gallery" element={<PhotographerGalleryPage />} />
@@ -54,15 +62,22 @@ function App() {
             <Route path="reports" element={<ReportsPage />} />
             <Route path="settings" element={<Settings />} />
           </Route>
-          
-          <Route path="client" element={<DashboardLayout userType="client" />}>
+
+          <Route
+            path="client"
+            element={
+              <PrivateRoute userType="client">
+                <DashboardLayout userType="client" />
+              </PrivateRoute>
+            }
+          >
             <Route index element={<div>Client Dashboard</div>} />
             <Route path="my-events" element={<MyEventsPage />} />
             <Route path="my-gallery" element={<MyGallery />} />
             <Route path="profile" element={<ClientProfile />} />
           </Route>
         </Route>
-        
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
