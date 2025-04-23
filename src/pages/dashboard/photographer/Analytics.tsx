@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
@@ -317,9 +318,6 @@ const AnalyticsPage = () => {
                   strokeWidth={2}
                   yAxisId="left"
                   name="Vendas"
-                  label={{
-                    formatter: (value) => `R$${(value/100).toFixed(2)}`
-                  }}
                 />
                 <Line
                   type="monotone"

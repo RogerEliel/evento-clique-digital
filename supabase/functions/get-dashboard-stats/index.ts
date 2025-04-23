@@ -81,8 +81,8 @@ serve(async (req) => {
     // Prepare response
     const responseData = {
       events: eventsCount || 0,
-      revenue: revenueData ? revenueData[0].total_revenue || 0 : 0,
-      clients: clientsData ? clientsData[0].unique_clients || 0 : 0,
+      revenue: revenueData ? revenueData[0]?.total_revenue || 0 : 0,
+      clients: clientsData ? clientsData[0]?.unique_clients || 0 : 0,
       subscription: subscriptionData || { hasSubscription: false, subscription: null },
     };
     
