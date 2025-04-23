@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -61,7 +60,6 @@ const AnalyticsPage = () => {
   const { toast } = useToast();
   const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d');
   
-  // Fetch dashboard stats
   const { data: stats, isLoading: isLoadingStats, error: statsError } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async (): Promise<DashboardStats> => {
@@ -76,7 +74,6 @@ const AnalyticsPage = () => {
     },
   });
   
-  // Fetch sales trends
   const { data: salesTrends, isLoading: isLoadingTrends, error: trendsError } = useQuery({
     queryKey: ['sales-trends', period],
     queryFn: async (): Promise<SalesTrend[]> => {
@@ -89,7 +86,6 @@ const AnalyticsPage = () => {
         throw new Error('Falha ao carregar tendências de vendas');
       }
       
-      // Format dates to be readable
       return (data || []).map((item: any) => ({
         ...item,
         date: format(new Date(item.date), 'dd/MM'),
@@ -97,16 +93,13 @@ const AnalyticsPage = () => {
     },
   });
   
-  // Handle period change
   const handlePeriodChange = (value: '7d' | '30d' | '90d') => {
     setPeriod(value);
   };
   
-  // Export CSV function
   const exportCSV = () => {
     if (!salesTrends) return;
     
-    // Convert data to CSV
     const headers = ['Data', 'Vendas (R$)', 'Eventos'];
     const dataRows = salesTrends.map(row => [
       row.date, 
@@ -114,13 +107,11 @@ const AnalyticsPage = () => {
       row.events
     ]);
     
-    // Create CSV content
     const csvContent = [
       headers.join(';'),
       ...dataRows.map(row => row.join(';'))
     ].join('\n');
     
-    // Create and download the file
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -139,7 +130,6 @@ const AnalyticsPage = () => {
     });
   };
   
-  // Show error if any
   if (statsError || trendsError) {
     toast({
       title: "Erro ao carregar dados",
@@ -148,7 +138,6 @@ const AnalyticsPage = () => {
     });
   }
 
-  // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -156,7 +145,6 @@ const AnalyticsPage = () => {
     }).format(value / 100);
   };
 
-  // Subscription status card content
   const renderSubscriptionStatus = () => {
     if (isLoadingStats) {
       return <Skeleton className="h-6 w-24" />;
@@ -198,9 +186,7 @@ const AnalyticsPage = () => {
         </p>
       </div>
       
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Events Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Eventos</CardTitle>
@@ -218,7 +204,6 @@ const AnalyticsPage = () => {
           </CardContent>
         </Card>
         
-        {/* Revenue Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Receita</CardTitle>
@@ -236,7 +221,6 @@ const AnalyticsPage = () => {
           </CardContent>
         </Card>
         
-        {/* Clients Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Clientes</CardTitle>
@@ -254,7 +238,6 @@ const AnalyticsPage = () => {
           </CardContent>
         </Card>
         
-        {/* Subscription Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Assinatura</CardTitle>
@@ -273,7 +256,6 @@ const AnalyticsPage = () => {
         </Card>
       </div>
       
-      {/* Sales Trends Chart */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -316,7 +298,7 @@ const AnalyticsPage = () => {
                   yAxisId="left"
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => `R$${value/100}`}
+                  tickFormatter={(value) => `R$${(value/100).toFixed(2)}`}
                   fontSize={12}
                 />
                 <YAxis 
@@ -335,7 +317,9 @@ const AnalyticsPage = () => {
                   strokeWidth={2}
                   yAxisId="left"
                   name="Vendas"
-                  formatter={(value) => `R$${(value/100).toFixed(2)}`}
+                  label={{
+                    formatter: (value) => `R$${(value/100).toFixed(2)}`
+                  }}
                 />
                 <Line
                   type="monotone"
