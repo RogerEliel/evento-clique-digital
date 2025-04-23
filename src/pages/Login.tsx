@@ -48,7 +48,7 @@ const Login = () => {
         description: "Você será redirecionado para o painel.",
       });
 
-      navigate("/deshboard/photographer/profile");
+      navigate("/dashboard/photographer/profile");
     } catch (error: any) {
       toast({
         variant: "destructive",
