@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { CalendarPlus, Gallery, Users, CreditCard, BarChart } from 'lucide-react';
+import { CalendarPlus, GalleryThumbnails, Users, CreditCard, BarChart } from 'lucide-react';
 
 interface DashboardStats {
   totalEvents: number;
@@ -114,7 +115,7 @@ export default function PhotographerDashboard() {
         <StatCard 
           title="Fotos" 
           value={isLoading ? undefined : stats?.totalPhotos || 0} 
-          icon={<Gallery className="h-5 w-5" />}
+          icon={<GalleryThumbnails className="h-5 w-5" />}
           linkTo="/dashboard/photographer/gallery"
         />
         <StatCard 
