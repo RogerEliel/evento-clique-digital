@@ -35,20 +35,25 @@ const Login = () => {
   const onSubmit = async (data: LoginForm) => {
     try {
       setIsLoading(true);
-
+  
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.senha,
       });
-
+  
       if (authError) throw authError;
-
+  
+      // 🔐 Define o tipo de usuário no localStorage (ex: "photographer" ou "client")
+      // Essa parte deve ser substituída futuramente por uma verificação real no Supabase
+      localStorage.setItem("userType", "photographer");
+  
       toast({
         title: "Login realizado com sucesso!",
         description: "Você será redirecionado para o painel.",
       });
-
-      navigate("/dashboard/photographer/profile");
+  
+      // 🔁 Redireciona para o index do dashboard (que agora decide o destino final)
+      navigate("/dashboard");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -58,7 +63,7 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  };  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
