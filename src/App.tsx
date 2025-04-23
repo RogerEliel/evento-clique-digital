@@ -6,7 +6,6 @@ import Login from './pages/Login';
 import EsqueciSenha from './pages/EsqueciSenha';
 import PublicGalleryPage from './pages/gallery/[token]';
 import DashboardIndex from './pages/dashboard/Index';
-import DashboardLogin from './pages/Login';
 import DashboardRegister from './pages/dashboard/Register';
 import DashboardForgotPassword from './pages/dashboard/ForgotPassword';
 import { DashboardLayout } from './layouts/DashboardLayout';
@@ -25,24 +24,29 @@ import { Toaster } from "@/components/ui/toaster";
 import { PhotographerDashboard } from './pages/dashboard/photographer/Index';
 import ReportsPage from './pages/dashboard/photographer/Reports';
 import Settings from './pages/dashboard/photographer/Settings';
-import PrivateRoute from './components/PrivateRoute'; // Novo componente de rota protegida
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rotas Públicas */}
         <Route path="/" element={<Index />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/gallery/:token" element={<PublicGalleryPage />} />
 
+        {/* Dashboard */}
         <Route path="/dashboard">
           <Route index element={<DashboardIndex />} />
-          <Route path="login" element={<DashboardLogin />} />
           <Route path="register" element={<DashboardRegister />} />
           <Route path="esqueci-senha" element={<DashboardForgotPassword />} />
 
+          {/* Redirecionamento opcional para manter compatibilidade */}
+          <Route path="login" element={<Navigate to="/login" />} />
+
+          {/* Dashboard Fotógrafo */}
           <Route
             path="photographer"
             element={
@@ -63,6 +67,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
           </Route>
 
+          {/* Dashboard Cliente */}
           <Route
             path="client"
             element={
@@ -78,6 +83,7 @@ function App() {
           </Route>
         </Route>
 
+        {/* Página 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
