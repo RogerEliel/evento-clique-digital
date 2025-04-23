@@ -8,43 +8,56 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  );
 
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError || !user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   }
 
-  const { language, notifications_enabled, branding } = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch (_e) {
+    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
+  }
+  const { language, notifications_enabled, branding } = body;
 
   const { error } = await supabase
-    .from('user_settings')
-    .upsert({
-      user_id: user.id, 
-      language, 
-      notifications_enabled, 
-      branding
-    }, { 
-      onConflict: 'user_id' 
-    });
+    .from("user_settings")
+    .upsert(
+      [{
+        user_id: user.id,
+        language,
+        notifications_enabled,
+        branding
+      }],
+      { onConflict: "user_id" }
+    );
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   }
 
-  return new Response(JSON.stringify({ message: "Settings updated successfully" }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+  return new Response(JSON.stringify({ message: "Settings updated" }), {
+    status: 200,
+    headers: { ...corsHeaders, "Content-Type": "application/json" }
   });
 });
