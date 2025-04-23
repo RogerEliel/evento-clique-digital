@@ -55,7 +55,11 @@ export default function Login() {
       }
   
       // Armazenar tipo no localStorage
-      localStorage.setItem("userType", userType);
+      localStorage.setItem("user", JSON.stringify({
+        type: "photographer",
+        email: data.email,
+        // mais campos se quiser guardar depois
+      }));      
   
       toast({
         title: "Login realizado com sucesso!",
