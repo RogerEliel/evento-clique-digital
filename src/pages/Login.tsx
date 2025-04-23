@@ -55,7 +55,9 @@ export default function Login() {
         description: "Você será redirecionado para o painel.",
       });
 
-      navigate("/dashboard");
+      const userType = "photographer"; // ou "client"
+      navigate(`/dashboard/${userType}`);
+
     } catch (error: any) {
       toast({
         title: "Erro ao fazer login",
