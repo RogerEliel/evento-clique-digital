@@ -24,7 +24,7 @@ interface PrivateRouteProps {
 
 export default function PrivateRoute({ children, userType }: PrivateRouteProps) {
   if (!isAuthenticated()) {
-    return <Navigate to="/dashboard/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   const currentUserType = getUserType();

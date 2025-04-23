@@ -59,7 +59,7 @@ export default function DashboardRegister() {
         title: "Cadastro realizado com sucesso",
         description: "Você já pode fazer login na plataforma.",
       });
-      navigate('/dashboard/login');
+      navigate('/login');
     } catch (error) {
       toast({
         title: "Erro no cadastro",
@@ -220,7 +220,7 @@ export default function DashboardRegister() {
               
               <div className="text-center text-sm">
                 Já tem uma conta?{' '}
-                <Link to="/dashboard/login" className="text-[#FF6B6B] hover:underline">
+                <Link to="/login" className="text-[#FF6B6B] hover:underline">
                   Faça login
                 </Link>
               </div>

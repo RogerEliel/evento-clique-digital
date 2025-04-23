@@ -86,7 +86,7 @@ export default function SubscriptionPage() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        navigate('/dashboard/login');
+        navigate('/login');
         return { hasSubscription: false, subscription: null };
       }
       
@@ -129,7 +129,7 @@ export default function SubscriptionPage() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        navigate('/dashboard/login');
+        navigate('/login');
         return;
       }
       

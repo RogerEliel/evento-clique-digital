@@ -104,7 +104,7 @@ export default function ForgotPassword() {
                 
                 <div className="text-center">
                   <Link 
-                    to="/dashboard/login" 
+                    to="/login" 
                     className="inline-flex items-center text-sm text-[#1E2D3D] hover:text-[#FF6B6B]"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
@@ -124,7 +124,7 @@ export default function ForgotPassword() {
               
               <div className="text-center pt-4">
                 <Link 
-                  to="/dashboard/login" 
+                  to="/login" 
                   className="inline-flex items-center text-sm text-[#1E2D3D] hover:text-[#FF6B6B]"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />

@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import EsqueciSenha from './pages/EsqueciSenha';
 import PublicGalleryPage from './pages/gallery/[token]';
 import DashboardIndex from './pages/dashboard/Index';
-import DashboardLogin from './pages/dashboard/Login';
+import DashboardLogin from './pages/Login';
 import DashboardRegister from './pages/dashboard/Register';
 import DashboardForgotPassword from './pages/dashboard/ForgotPassword';
 import { DashboardLayout } from './layouts/DashboardLayout';

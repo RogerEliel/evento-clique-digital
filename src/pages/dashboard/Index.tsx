@@ -10,5 +10,5 @@ export default function DashboardIndex() {
     return <Navigate to="/dashboard/client/my-gallery" replace />;
   }
 
-  return <Navigate to="/dashboard/login" replace />;
+  return <Navigate to="/login" replace />;
 }

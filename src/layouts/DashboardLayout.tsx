@@ -38,7 +38,7 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
       title: "Logout realizado",
       description: "Você foi desconectado com sucesso.",
     });
-    navigate('/dashboard/login');
+    navigate('/login');
   };
 
   const photographerMenuItems = [
