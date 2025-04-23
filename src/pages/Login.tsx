@@ -48,7 +48,7 @@ const Login = () => {
         description: "Você será redirecionado para o painel.",
       });
 
-      navigate("/");
+      navigate("/deshboard/photographer/profile");
     } catch (error: any) {
       toast({
         variant: "destructive",
