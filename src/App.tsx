@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Index from './pages/Index';
@@ -24,6 +23,7 @@ import ClientProfile from './pages/dashboard/client/Profile';
 import NotFound from './pages/NotFound';
 import { Toaster } from "@/components/ui/toaster";
 import { PhotographerDashboard } from './pages/dashboard/photographer/Index';
+import ReportsPage from './pages/dashboard/photographer/Reports';
 
 function App() {
   return (
@@ -49,10 +49,11 @@ function App() {
             <Route path="events" element={<EventsPage />} />
             <Route path="gallery" element={<PhotographerGalleryPage />} />
             <Route path="clients" element={<ClientsPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="subscription" element={<SubscriptionPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="orders" element={<OrdersPage />} />
-            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
           </Route>
           
           {/* Client routes */}
