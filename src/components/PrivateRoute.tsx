@@ -1,17 +1,18 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-// Simulando autenticação — substitua pela lógica real do seu projeto
 const isAuthenticated = () => {
   const user = localStorage.getItem('user');
-  return user !== null;
+  return !!user;
 };
 
-const getUserType = () => {
+const getUserType = (): 'photographer' | 'client' | null => {
   const user = localStorage.getItem('user');
   if (!user) return null;
+
   try {
-    return JSON.parse(user).type; // Espera que o user tenha um campo "type": "photographer" ou "client"
+    const parsedUser = JSON.parse(user);
+    return parsedUser.type || null;
   } catch {
     return null;
   }
@@ -29,6 +30,7 @@ export default function PrivateRoute({ children, userType }: PrivateRouteProps) 
 
   const currentUserType = getUserType();
 
+  // Se estiver logado, mas for do tipo errado, redireciona para o painel correto
   if (currentUserType !== userType) {
     return <Navigate to={`/dashboard/${currentUserType}`} replace />;
   }
