@@ -47,13 +47,15 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
     { title: 'Clientes', href: '/dashboard/photographer/clients', icon: 'users' },
     { title: 'Análises', href: '/dashboard/photographer/analytics', icon: 'bar-chart' },
     { title: 'Assinatura', href: '/dashboard/photographer/subscription', icon: 'credit-card' },
-    { title: 'Meu Perfil', href: '/dashboard/photographer/profile', icon: 'user' }
+    { title: 'Meu Perfil', href: '/dashboard/photographer/profile', icon: 'user' },
+    { title: 'Configurações', href: '/dashboard/photographer/settings', icon: 'settings' }
   ];
 
   const clientMenuItems = [
     { title: 'Meus Eventos', href: '/dashboard/client/my-events', icon: 'calendar' },
     { title: 'Minha Galeria', href: '/dashboard/client/my-gallery', icon: 'gallery-horizontal' },
-    { title: 'Meu Perfil', href: '/dashboard/client/profile', icon: 'user' }
+    { title: 'Meu Perfil', href: '/dashboard/client/profile', icon: 'user' },
+    { title: 'Configurações', href: '/dashboard/client/settings', icon: 'settings' }
   ];
 
   const menuItems = userType === 'photographer' ? photographerMenuItems : clientMenuItems;
@@ -84,6 +86,7 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
                         {item.icon === 'user' && <span className="mr-2"><User /></span>}
                         {item.icon === 'credit-card' && <span className="mr-2"><CreditCard /></span>}
                         {item.icon === 'bar-chart' && <span className="mr-2"><BarChart /></span>}
+                        {item.icon === 'settings' && <span className="mr-2"><Settings /></span>}
                         {item.title}
                       </a>
                     </SidebarMenuButton>
@@ -191,5 +194,23 @@ const Users = () => (
     <circle cx="9" cy="7" r="4" />
     <path d="M22 21v-2a4 4 0 0 1 0 7.75" />
     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const Settings = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z" />
+    <path d="M12 14a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z" />
+    <path d="M12 18a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z" />
   </svg>
 );

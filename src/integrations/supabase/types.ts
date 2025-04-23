@@ -307,6 +307,36 @@ export type Database = {
           },
         ]
       }
+      user_settings: {
+        Row: {
+          branding: Json | null
+          created_at: string | null
+          id: string
+          language: string | null
+          notifications_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          branding?: Json | null
+          created_at?: string | null
+          id?: string
+          language?: string | null
+          notifications_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          branding?: Json | null
+          created_at?: string | null
+          id?: string
+          language?: string | null
+          notifications_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

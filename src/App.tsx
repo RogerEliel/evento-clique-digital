@@ -24,26 +24,24 @@ import NotFound from './pages/NotFound';
 import { Toaster } from "@/components/ui/toaster";
 import { PhotographerDashboard } from './pages/dashboard/photographer/Index';
 import ReportsPage from './pages/dashboard/photographer/Reports';
+import Settings from './pages/dashboard/photographer/Settings';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public routes */}
         <Route path="/" element={<Index />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/login" element={<Login />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/gallery/:token" element={<PublicGalleryPage />} />
         
-        {/* Dashboard routes */}
         <Route path="/dashboard">
           <Route index element={<DashboardIndex />} />
           <Route path="login" element={<DashboardLogin />} />
           <Route path="register" element={<DashboardRegister />} />
           <Route path="esqueci-senha" element={<DashboardForgotPassword />} />
           
-          {/* Photographer routes */}
           <Route path="photographer" element={<DashboardLayout userType="photographer" />}>
             <Route index element={<PhotographerDashboard />} />
             <Route path="events" element={<EventsPage />} />
@@ -54,9 +52,9 @@ function App() {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="reports" element={<ReportsPage />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           
-          {/* Client routes */}
           <Route path="client" element={<DashboardLayout userType="client" />}>
             <Route index element={<div>Client Dashboard</div>} />
             <Route path="my-events" element={<MyEventsPage />} />
