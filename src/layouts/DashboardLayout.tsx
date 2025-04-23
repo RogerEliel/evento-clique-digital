@@ -1,7 +1,6 @@
-
 import { ReactNode, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { LogOut, User, CreditCard } from 'lucide-react';
+import { LogOut, User, CreditCard, BarChart } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarContent, 
@@ -46,6 +45,7 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
     { title: 'Eventos', href: '/dashboard/photographer/events', icon: 'calendar' },
     { title: 'Galeria', href: '/dashboard/photographer/gallery', icon: 'gallery-horizontal' },
     { title: 'Clientes', href: '/dashboard/photographer/clients', icon: 'users' },
+    { title: 'Análises', href: '/dashboard/photographer/analytics', icon: 'bar-chart' },
     { title: 'Assinatura', href: '/dashboard/photographer/subscription', icon: 'credit-card' },
     { title: 'Meu Perfil', href: '/dashboard/photographer/profile', icon: 'user' }
   ];
@@ -83,6 +83,7 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
                         {item.icon === 'users' && <span className="mr-2"><Users /></span>}
                         {item.icon === 'user' && <span className="mr-2"><User /></span>}
                         {item.icon === 'credit-card' && <span className="mr-2"><CreditCard /></span>}
+                        {item.icon === 'bar-chart' && <span className="mr-2"><BarChart /></span>}
                         {item.title}
                       </a>
                     </SidebarMenuButton>
@@ -135,7 +136,6 @@ export function DashboardLayout({ children, userType = 'photographer' }: Dashboa
   );
 }
 
-// Missing Lucide icon components
 const Calendar = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -189,7 +189,7 @@ const Users = () => (
   >
     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
     <circle cx="9" cy="7" r="4" />
-    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M22 21v-2a4 4 0 0 1 0 7.75" />
     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
   </svg>
 );

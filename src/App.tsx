@@ -17,6 +17,7 @@ import ClientsPage from './pages/dashboard/photographer/Clients';
 import SubscriptionPage from './pages/dashboard/photographer/Subscription';
 import ProfilePage from './pages/dashboard/photographer/Profile';
 import OrdersPage from './pages/dashboard/photographer/Orders';
+import AnalyticsPage from './pages/dashboard/photographer/Analytics';
 import MyEventsPage from './pages/dashboard/client/MyEvents';
 import MyGallery from './pages/dashboard/client/MyGallery';
 import ClientProfile from './pages/dashboard/client/Profile';
@@ -51,6 +52,7 @@ function App() {
             <Route path="subscription" element={<SubscriptionPage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="orders" element={<OrdersPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
           </Route>
           
           {/* Client routes */}
