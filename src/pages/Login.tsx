@@ -39,25 +39,35 @@ export default function Login() {
   const onSubmit = async (data: LoginForm) => {
     try {
       setIsLoading(true);
-
+  
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.senha,
       });
-
+  
       if (authError) throw authError;
-
-      // 🔐 Mock para futura verificação de perfil
-      localStorage.setItem("userType", "photographer");
-
+  
+      // 🔍 Verificar tipo do usuário via metadata (ajuste isso conforme sua estrutura no Supabase)
+      const userType = authData.user.user_metadata?.type;
+  
+      if (!userType || !["photographer", "client"].includes(userType)) {
+        throw new Error("Tipo de usuário não reconhecido.");
+      }
+  
+      // Armazenar tipo no localStorage
+      localStorage.setItem("userType", userType);
+  
       toast({
         title: "Login realizado com sucesso!",
         description: "Você será redirecionado para o painel.",
       });
-
-      const userType = "photographer"; // ou "client"
-      navigate(`/dashboard/${userType}`);
-
+  
+      // Redirecionar com base no tipo
+      if (userType === "photographer") {
+        navigate("/dashboard/photographer");
+      } else {
+        navigate("/dashboard/client");
+      }
     } catch (error: any) {
       toast({
         title: "Erro ao fazer login",
@@ -68,7 +78,7 @@ export default function Login() {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
       <motion.div 
