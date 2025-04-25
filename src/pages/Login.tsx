@@ -46,32 +46,32 @@ export default function Login() {
       });
   
       if (authError) throw authError;
-  
-      // 🔍 Verificar tipo do usuário via metadata (ajuste isso conforme sua estrutura no Supabase)
-      const userType = authData.user.user_metadata?.type;
-  
-      if (!userType || !["photographer", "client"].includes(userType)) {
-        throw new Error("Tipo de usuário não reconhecido.");
+      
+      if (!authData.user) {
+        throw new Error("Erro ao obter dados do usuário");
       }
-  
-      // Armazenar tipo no localStorage
-      localStorage.setItem("user", JSON.stringify({
-        type: "photographer",
+
+      // Fetch user role
+      const role = await getUserRole(authData.user.id);
+      
+      if (!role) {
+        throw new Error("Tipo de usuário não encontrado");
+      }
+
+      // Store user info
+      saveUser({
+        type: role,
         email: data.email,
-        // mais campos se quiser guardar depois
-      }));      
-  
+      });
+
       toast({
         title: "Login realizado com sucesso!",
         description: "Você será redirecionado para o painel.",
       });
   
-      // Redirecionar com base no tipo
-      if (userType === "photographer") {
-        navigate("/dashboard/photographer");
-      } else {
-        navigate("/dashboard/client");
-      }
+      // Redirect based on role
+      navigate(`/dashboard/${role}`);
+      
     } catch (error: any) {
       toast({
         title: "Erro ao fazer login",

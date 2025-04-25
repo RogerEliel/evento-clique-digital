@@ -13,16 +13,23 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Lock, User, Shield, Mail, Building, ArrowLeft, ArrowRight } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { RoleSelector } from "@/components/ui/role-selector";
+
 const registerSchema = z.object({
   nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   email: z.string().email("Email inválido"),
   senha: z.string().min(8, "Senha deve ter pelo menos 8 caracteres"),
   empresa: z.string().optional(),
+  role: z.enum(["client", "photographer"], {
+    required_error: "Selecione um tipo de conta"
+  }),
   consentimento_lgpd: z.boolean().refine(val => val === true, {
     message: "Você precisa aceitar os termos de uso e política de privacidade"
   })
 });
+
 type RegisterForm = z.infer<typeof registerSchema>;
+
 const Cadastro = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formStep, setFormStep] = useState(0);
@@ -34,44 +41,64 @@ const Cadastro = () => {
       email: "",
       senha: "",
       empresa: "",
+      role: "client",
       consentimento_lgpd: false
     },
     mode: "onChange"
   });
+
   const onSubmit = async (data: RegisterForm) => {
     try {
       setIsLoading(true);
 
       // Create auth user
-      const {
-        error: authError
-      } = await supabase.auth.signUp({
+      const { error: authError } = await supabase.auth.signUp({
         email: data.email,
-        password: data.senha
+        password: data.senha,
+        options: {
+          data: {
+            role: data.role
+          }
+        }
       });
       if (authError) throw authError;
 
       // Get client IP
       const ipResponse = await fetch("https://api.ipify.org?format=json");
-      const {
-        ip
-      } = await ipResponse.json();
+      const { ip } = await ipResponse.json();
 
-      // Register photographer
-      const response = await supabase.functions.invoke("send-confirmation", {
-        body: {
-          nome: data.nome,
-          email: data.email,
-          empresa: data.empresa,
-          consentimento_lgpd: data.consentimento_lgpd,
-          ip_consentimento: ip
-        }
-      });
-      if (response.error) throw response.error;
+      // Register user role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert([{ 
+          user_id: (await supabase.auth.getUser()).data.user?.id,
+          role: data.role 
+        }]);
+      
+      if (roleError) throw roleError;
+
+      // Register photographer if applicable
+      if (data.role === 'photographer') {
+        const response = await supabase.functions.invoke("send-confirmation", {
+          body: {
+            nome: data.nome,
+            email: data.email,
+            empresa: data.empresa,
+            consentimento_lgpd: data.consentimento_lgpd,
+            ip_consentimento: ip
+          }
+        });
+        
+        if (response.error) throw response.error;
+      }
+
       toast({
         title: "Cadastro realizado com sucesso!",
-        description: "Verifique seu email para confirmar sua conta."
+        description: data.role === 'photographer' 
+          ? "Verifique seu email para confirmar sua conta."
+          : "Você já pode fazer login na plataforma."
       });
+
       navigate("/login");
     } catch (error: any) {
       toast({
@@ -83,14 +110,17 @@ const Cadastro = () => {
       setIsLoading(false);
     }
   };
+
   const nextFormStep = async () => {
     const fieldsToValidate = formStep === 0 ? ['nome', 'email'] : ['senha', 'consentimento_lgpd'];
     const isValid = await form.trigger(fieldsToValidate as any);
     if (isValid) setFormStep(formStep + 1);
   };
+
   const prevFormStep = () => {
     setFormStep(formStep - 1);
   };
+
   return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-4">
       <motion.div className="w-full max-w-md" initial={{
       opacity: 0,
@@ -137,9 +167,11 @@ const Cadastro = () => {
               }} transition={{
                 duration: 0.3
               }}>
-                    <FormField control={form.control} name="nome" render={({
-                  field
-                }) => <FormItem>
+                    <FormField
+                      control={form.control}
+                      name="nome"
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel>
                             Nome completo <span className="text-red-500">*</span>
                           </FormLabel>
@@ -150,11 +182,15 @@ const Cadastro = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
 
-                    <FormField control={form.control} name="email" render={({
-                  field
-                }) => <FormItem className="mt-4">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
                           <FormLabel>
                             Email <span className="text-red-500">*</span>
                           </FormLabel>
@@ -165,11 +201,15 @@ const Cadastro = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
 
-                    <FormField control={form.control} name="empresa" render={({
-                  field
-                }) => <FormItem className="mt-4">
+                    <FormField
+                      control={form.control}
+                      name="empresa"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
                           <FormLabel>
                             Empresa (opcional)
                           </FormLabel>
@@ -180,8 +220,29 @@ const Cadastro = () => {
                             </div>
                           </FormControl>
                           <FormMessage />
-                        </FormItem>} />
-                    
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="role"
+                      render={({ field }) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel>
+                            Tipo de conta <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <RoleSelector
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <Button type="button" onClick={nextFormStep} className="w-full mt-6 bg-[#FF6B6B] hover:bg-[#FF6B6B]/90">
                       Próximo <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -199,9 +260,11 @@ const Cadastro = () => {
               }} transition={{
                 duration: 0.3
               }}>
-                    <FormField control={form.control} name="senha" render={({
-                  field
-                }) => <FormItem>
+                    <FormField
+                      control={form.control}
+                      name="senha"
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel>
                             Senha <span className="text-red-500">*</span>
                           </FormLabel>
@@ -215,11 +278,15 @@ const Cadastro = () => {
                             A senha deve ter pelo menos 8 caracteres
                           </FormDescription>
                           <FormMessage />
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
 
-                    <FormField control={form.control} name="consentimento_lgpd" render={({
-                  field
-                }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-6">
+                    <FormField
+                      control={form.control}
+                      name="consentimento_lgpd"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-6">
                           <FormControl>
                             <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                           </FormControl>
@@ -229,7 +296,9 @@ const Cadastro = () => {
                             </FormLabel>
                             <FormMessage />
                           </div>
-                        </FormItem>} />
+                        </FormItem>
+                      )}
+                    />
 
                     <div className="flex gap-2 mt-6">
                       <Button type="button" variant="outline" onClick={prevFormStep} className="flex-1">
@@ -278,4 +347,5 @@ const Cadastro = () => {
       </motion.div>
     </div>;
 };
+
 export default Cadastro;

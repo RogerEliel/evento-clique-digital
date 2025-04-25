@@ -1,12 +1,28 @@
-// src/utils/auth.ts
 
-export type UserType = 'photographer' | 'client';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
+
+export type UserRole = 'client' | 'photographer';
 
 export interface UserData {
-  type: UserType;
+  type: UserRole;
   email?: string;
-  // Você pode adicionar mais campos aqui se quiser
 }
+
+export const getUserRole = async (userId: string): Promise<UserRole | null> => {
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user role:', error);
+    return null;
+  }
+
+  return data?.role || null;
+};
 
 export const saveUser = (user: UserData) => {
   localStorage.setItem('user', JSON.stringify(user));
@@ -19,14 +35,9 @@ export const getUser = (): UserData | null => {
   try {
     return JSON.parse(user);
   } catch (error) {
-    console.error('Erro ao parsear o user do localStorage:', error);
+    console.error('Error parsing user from localStorage:', error);
     return null;
   }
-};
-
-export const getUserType = (): UserType | null => {
-  const user = getUser();
-  return user?.type || null;
 };
 
 export const clearUser = () => {
@@ -36,3 +47,4 @@ export const clearUser = () => {
 export const isAuthenticated = (): boolean => {
   return getUser() !== null;
 };
+
