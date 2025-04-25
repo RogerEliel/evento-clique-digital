@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Index from './pages/Index';
 import Cadastro from './pages/Cadastro';
 import Login from './pages/Login';
@@ -51,7 +52,9 @@ function App() {
             path="photographer"
             element={
               <PrivateRoute userType="photographer">
-                <DashboardLayout userType="photographer" />
+                <DashboardLayout userType="photographer">
+                  <Outlet />
+                </DashboardLayout>
               </PrivateRoute>
             }
           >
@@ -72,7 +75,9 @@ function App() {
             path="client"
             element={
               <PrivateRoute userType="client">
-                <DashboardLayout userType="client" />
+                <DashboardLayout userType="client">
+                  <Outlet />
+                </DashboardLayout>
               </PrivateRoute>
             }
           >
