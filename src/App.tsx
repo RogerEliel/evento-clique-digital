@@ -26,6 +26,8 @@ import { PhotographerDashboard } from './pages/dashboard/photographer/Index';
 import ReportsPage from './pages/dashboard/photographer/Reports';
 import Settings from './pages/dashboard/photographer/Settings';
 import PrivateRoute from './components/PrivateRoute';
+import SearchPhotographers from './pages/SearchPhotographers';
+import ForPhotographers from './pages/ForPhotographers';
 
 function App() {
   return (
@@ -37,6 +39,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/gallery/:token" element={<PublicGalleryPage />} />
+        
+        {/* Novas rotas adicionadas */}
+        <Route path="/buscar-fotografos" element={<SearchPhotographers />} />
+        <Route path="/para-fotografos" element={<ForPhotographers />} />
 
         {/* Dashboard */}
         <Route path="/dashboard">

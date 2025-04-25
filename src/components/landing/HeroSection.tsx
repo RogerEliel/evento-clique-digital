@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Camera, User, CheckCircle, Upload, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -33,11 +34,15 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.7 }}
             >
-              <Button size="lg" className="bg-[#FF6B6B] hover:bg-[#FF6B6B]/90 text-white">
-                Encontrar fotógrafos <ArrowRight className="ml-2" />
+              <Button size="lg" className="bg-[#FF6B6B] hover:bg-[#FF6B6B]/90 text-white" asChild>
+                <Link to="/buscar-fotografos">
+                  Encontrar fotógrafos <ArrowRight className="ml-2" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="text-[#1E2D3D] border-[#1E2D3D] hover:bg-gray-100">
-                Seja um fotógrafo <Camera className="ml-2" />
+              <Button size="lg" variant="outline" className="text-[#1E2D3D] border-[#1E2D3D] hover:bg-gray-100" asChild>
+                <Link to="/para-fotografos">
+                  Seja um fotógrafo <Camera className="ml-2" />
+                </Link>
               </Button>
             </motion.div>
             <motion.div 
