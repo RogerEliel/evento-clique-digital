@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated, getUserType, UserType } from '@/utils/auth';
+import { isAuthenticated, getUserType, UserRole } from '@/utils/auth';
 
 interface PrivateRouteProps {
   children: React.ReactElement;
-  userType: UserType;
+  userType: UserRole;
 }
 
 export default function PrivateRoute({ children, userType }: PrivateRouteProps) {

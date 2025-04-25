@@ -48,3 +48,7 @@ export const isAuthenticated = (): boolean => {
   return getUser() !== null;
 };
 
+export const getUserType = (): UserRole | null => {
+  const user = getUser();
+  return user ? user.type : null;
+};

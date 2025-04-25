@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Lock, User, Shield, Mail, Building, ArrowLeft, ArrowRight } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { RoleSelector } from "@/components/ui/role-selector";
+import { RoleSelector } from "@/components/auth/RoleSelector";
 
 const registerSchema = z.object({
   nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),

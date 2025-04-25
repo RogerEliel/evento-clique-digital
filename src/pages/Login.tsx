@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { getUserRole, saveUser } from "@/utils/auth";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
