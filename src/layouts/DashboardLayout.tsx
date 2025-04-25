@@ -1,8 +1,9 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
+import { getUserType } from "@/utils/auth";
+import type { UserRole } from "@/utils/auth";
 
-// We'll create simple placeholder components for the missing components
-// Later you can implement proper components with the desired functionality
+// Sidebar component with navigation links based on user type
 const Sidebar = ({ userType }: { userType: 'photographer' | 'client' }) => (
   <aside className="w-64 bg-gray-100 p-4 hidden md:block">
     <nav>
@@ -67,32 +68,28 @@ const PhotographerFooter = () => (
   </footer>
 );
 
-const savedUser = localStorage.getItem("user");
-let userType: 'photographer' | 'client' = 'photographer'; // valor padrão
-
-if (savedUser) {
-  try {
-    const parsed = JSON.parse(savedUser);
-    if (parsed.type === 'client' || parsed.type === 'photographer') {
-      userType = parsed.type;
-    }
-  } catch (e) {
-    console.error("Erro ao ler o tipo de usuário do localStorage", e);
-  }
-}
-
 export interface DashboardLayoutProps {
   children?: ReactNode;
   userType?: 'photographer' | 'client';
 }
 
 export function DashboardLayout({ children, userType: userTypeProp }: DashboardLayoutProps) {
-  // Use the prop if provided, otherwise use the value from localStorage
-  const currentUserType = userTypeProp || userType;
+  // Use useState for user type instead of directly accessing localStorage outside of component
+  const [currentUserType, setCurrentUserType] = useState<UserRole>(userTypeProp || 'photographer');
+  
+  // Use useEffect to safely handle localStorage operations
+  useEffect(() => {
+    if (!userTypeProp) {
+      const storedType = getUserType();
+      if (storedType) {
+        setCurrentUserType(storedType);
+      }
+    }
+  }, [userTypeProp]);
   
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Cabeçalho */}
+      {/* Header */}
       {currentUserType === "photographer" ? (
         <PhotographerHeader />
       ) : (
@@ -103,11 +100,11 @@ export function DashboardLayout({ children, userType: userTypeProp }: DashboardL
         {/* Sidebar */}
         <Sidebar userType={currentUserType} />
 
-        {/* Conteúdo principal */}
+        {/* Main content */}
         <main className="flex-1 p-4">{children}</main>
       </div>
 
-      {/* Rodapé */}
+      {/* Footer */}
       {currentUserType === "photographer" ? (
         <PhotographerFooter />
       ) : (
