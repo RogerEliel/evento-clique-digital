@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { User, Key } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -6,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useProfile } from '@/hooks/useProfile';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { ProfileForm } from '@/components/profile/ProfileForm';
-import { SecurityForm } from '@/components/profile/SecurityForm';
+import { SecuritySection } from '@/components/profile/SecuritySection';
 
 export default function PhotographerProfilePage() {
   const { toast } = useToast();
@@ -123,12 +122,7 @@ export default function PhotographerProfilePage() {
         </TabsContent>
         
         <TabsContent value="security">
-          <SecurityForm
-            isLoading={isLoading}
-            securityForm={securityForm}
-            onSubmit={handleSecuritySubmit}
-            onSecurityFormChange={handleSecurityFormChange}
-          />
+          <SecuritySection />
         </TabsContent>
       </Tabs>
     </div>

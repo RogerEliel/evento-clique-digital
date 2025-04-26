@@ -1,0 +1,207 @@
+
+import { useState } from 'react';
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { KeyRound, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+export function MFASetup() {
+  const { toast } = useToast();
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [totpSecret, setTotpSecret] = useState<{ qr: string; secret: string } | null>(null);
+  const [loadingTotp, setLoadingTotp] = useState(false);
+  const [loadingSMS, setLoadingSMS] = useState(false);
+
+  const setupTOTP = async () => {
+    try {
+      setLoadingTotp(true);
+      const { data: { totp }, error } = await supabase.auth.mfa.enroll({
+        factorType: 'totp'
+      });
+
+      if (error) throw error;
+      if (totp) {
+        setTotpSecret({
+          qr: totp.qr_code,
+          secret: totp.secret
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erro na configuração do TOTP",
+        description: "Não foi possível configurar o autenticador.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingTotp(false);
+    }
+  };
+
+  const verifyTOTP = async () => {
+    try {
+      setLoadingTotp(true);
+      const { error } = await supabase.auth.mfa.verify({
+        factorId: 'totp',
+        code: verificationCode
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Autenticador configurado",
+        description: "O autenticador foi configurado com sucesso.",
+      });
+      setTotpSecret(null);
+      setVerificationCode('');
+    } catch (error) {
+      toast({
+        title: "Erro na verificação",
+        description: "Código inválido. Tente novamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingTotp(false);
+    }
+  };
+
+  const setupSMS = async () => {
+    try {
+      setLoadingSMS(true);
+      const { error } = await supabase.auth.mfa.enroll({
+        factorType: 'sms',
+        phoneNumber
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Código SMS enviado",
+        description: "Digite o código recebido por SMS para confirmar.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no envio do SMS",
+        description: "Não foi possível enviar o código SMS.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingSMS(false);
+    }
+  };
+
+  const verifySMS = async () => {
+    try {
+      setLoadingSMS(true);
+      const { error } = await supabase.auth.mfa.verify({
+        factorId: 'sms',
+        code: verificationCode
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "SMS configurado",
+        description: "A verificação por SMS foi configurada com sucesso.",
+      });
+      setPhoneNumber('');
+      setVerificationCode('');
+    } catch (error) {
+      toast({
+        title: "Erro na verificação",
+        description: "Código inválido. Tente novamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingSMS(false);
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Configurar Autenticação de Dois Fatores</CardTitle>
+        <CardDescription>
+          Adicione uma camada extra de segurança à sua conta
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="authenticator">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="authenticator" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Aplicativo Autenticador
+            </TabsTrigger>
+            <TabsTrigger value="sms" className="flex items-center gap-2">
+              <KeyRound className="h-4 w-4" />
+              SMS
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="authenticator" className="space-y-4">
+            {!totpSecret ? (
+              <Button onClick={setupTOTP} loading={loadingTotp}>
+                Configurar Autenticador
+              </Button>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex flex-col items-center gap-4">
+                  <img src={totpSecret.qr} alt="QR Code" className="w-48 h-48" />
+                  <p className="text-sm text-muted-foreground">
+                    Código secreto: {totpSecret.secret}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="totp-code">Código de Verificação</Label>
+                  <Input
+                    id="totp-code"
+                    value={verificationCode}
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                    placeholder="Digite o código do autenticador"
+                  />
+                </div>
+                <Button onClick={verifyTOTP} loading={loadingTotp}>
+                  Verificar
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="sms" className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="phone">Número de Telefone</Label>
+              <Input
+                id="phone"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="+55 (11) 99999-9999"
+              />
+            </div>
+            <Button onClick={setupSMS} loading={loadingSMS}>
+              Enviar Código
+            </Button>
+
+            {phoneNumber && (
+              <div className="space-y-2">
+                <Label htmlFor="sms-code">Código de Verificação</Label>
+                <Input
+                  id="sms-code"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder="Digite o código recebido por SMS"
+                />
+                <Button onClick={verifySMS} loading={loadingSMS}>
+                  Verificar
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+}
