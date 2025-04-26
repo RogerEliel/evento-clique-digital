@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Filter, ChartBar, ChartLine, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { promoteToAdmin, setUserActiveStatus } from '@/utils/auth';
 import { format } from 'date-fns';
@@ -36,13 +36,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UserRole } from '@/utils/auth';
 
 interface User {
   id: string;
   email: string;
   name: string;
   created_at: string;
-  role: 'client' | 'photographer' | 'admin';
+  role: UserRole;
   is_active: boolean;
 }
 
@@ -282,10 +283,10 @@ export default function UsersPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                              {/* Fix the condition here to properly check if user is not admin */}
                               {user.role !== 'admin' && (
                                 <DropdownMenuItem 
                                   onClick={() => handlePromoteToAdmin(user.id)}
-                                  disabled={user.role === 'admin'}
                                 >
                                   Promover a Admin
                                 </DropdownMenuItem>

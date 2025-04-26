@@ -7,14 +7,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-interface DashboardStats {
-  total_users: number;
-  photographers_count: number;
-  clients_count: number;
-  events_count: number;
-  recent_photographers: RecentPhotographer[];
-}
-
 interface RecentPhotographer {
   id: string;
   email: string;
@@ -25,6 +17,14 @@ interface RecentPhotographer {
 interface UserGrowthData {
   week_start: string;
   new_users: number;
+}
+
+interface DashboardStats {
+  total_users: number;
+  photographers_count: number;
+  clients_count: number;
+  events_count: number;
+  recent_photographers: RecentPhotographer[];
 }
 
 export default function AdminDashboard() {
@@ -45,7 +45,12 @@ export default function AdminDashboard() {
 
         if (growthError) throw growthError;
 
-        setStats(statsData);
+        // Parse the JSON response from the database function
+        const parsedStatsData = typeof statsData === 'string' 
+          ? JSON.parse(statsData) 
+          : statsData;
+        
+        setStats(parsedStatsData as DashboardStats);
         setGrowthData(growthData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
