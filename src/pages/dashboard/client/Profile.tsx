@@ -9,44 +9,28 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useProfile } from '@/hooks/useProfile';
 
 export default function ClientProfilePage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [profileForm, setProfileForm] = useState({
-    name: 'Convidado Demo',
-    email: 'convidado@example.com',
-    phone: '(11) 98888-8888',
-    avatar: null
-  });
-  
+  const { profile, updateProfile } = useProfile();
   const [securityForm, setSecurityForm] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
 
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfileForm({
-      ...profileForm,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSecurityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSecurityForm({
-      ...securityForm,
-      [e.target.name]: e.target.value
-    });
-  };
-
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      // Mock API call - to be replaced with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await updateProfile.mutateAsync({
+        name: profile?.name || '',
+        phone: profile?.phone || '',
+        company: profile?.company || '',
+      });
       
       toast({
         title: "Perfil atualizado",
@@ -131,8 +115,8 @@ export default function ClientProfilePage() {
               <CardContent className="space-y-4">
                 <div className="flex flex-col items-center space-y-4">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={profileForm.avatar || ''} />
-                    <AvatarFallback className="text-2xl">{profileForm.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={profile?.avatar_url || ''} />
+                    <AvatarFallback className="text-2xl">{profile?.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <Button variant="outline" size="sm" className="flex items-center gap-2">
                     <Upload className="h-4 w-4" /> Alterar foto
@@ -150,20 +134,8 @@ export default function ClientProfilePage() {
                     <Input 
                       id="name"
                       name="name"
-                      value={profileForm.name}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={profileForm.email}
-                      onChange={handleProfileChange}
+                      value={profile?.name || ''}
+                      onChange={(e) => updateProfile.mutate({ name: e.target.value })}
                       required
                     />
                   </div>
@@ -173,8 +145,8 @@ export default function ClientProfilePage() {
                     <Input 
                       id="phone"
                       name="phone"
-                      value={profileForm.phone}
-                      onChange={handleProfileChange}
+                      value={profile?.phone || ''}
+                      onChange={(e) => updateProfile.mutate({ phone: e.target.value })}
                     />
                   </div>
                 </div>
@@ -183,9 +155,9 @@ export default function ClientProfilePage() {
                 <Button 
                   type="submit"
                   className="bg-[#52E0A1] hover:bg-[#52E0A1]/90 text-[#1E2D3D]"
-                  disabled={isLoading}
+                  disabled={isLoading || updateProfile.isPending}
                 >
-                  {isLoading ? (
+                  {isLoading || updateProfile.isPending ? (
                     <>
                       <Loader className="mr-2 h-4 w-4 animate-spin" /> Salvando...
                     </>
@@ -217,7 +189,10 @@ export default function ClientProfilePage() {
                     name="currentPassword"
                     type="password"
                     value={securityForm.currentPassword}
-                    onChange={handleSecurityChange}
+                    onChange={(e) => setSecurityForm(prev => ({
+                      ...prev,
+                      currentPassword: e.target.value
+                    }))}
                     required
                   />
                 </div>
@@ -229,7 +204,10 @@ export default function ClientProfilePage() {
                     name="newPassword"
                     type="password"
                     value={securityForm.newPassword}
-                    onChange={handleSecurityChange}
+                    onChange={(e) => setSecurityForm(prev => ({
+                      ...prev,
+                      newPassword: e.target.value
+                    }))}
                     required
                   />
                 </div>
@@ -241,7 +219,10 @@ export default function ClientProfilePage() {
                     name="confirmPassword"
                     type="password"
                     value={securityForm.confirmPassword}
-                    onChange={handleSecurityChange}
+                    onChange={(e) => setSecurityForm(prev => ({
+                      ...prev,
+                      confirmPassword: e.target.value
+                    }))}
                     required
                   />
                 </div>

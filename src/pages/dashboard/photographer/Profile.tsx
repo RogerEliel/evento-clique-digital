@@ -9,46 +9,29 @@ import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useProfile } from '@/hooks/useProfile';
 
 export default function ProfilePage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [profileForm, setProfileForm] = useState({
-    name: 'Fotógrafo Demo',
-    email: 'demo@seuclique.com',
-    company: 'Estúdio Fotográfico Demo',
-    bio: 'Fotógrafo profissional com mais de 10 anos de experiência em casamentos e eventos corporativos.',
-    phone: '(11) 99999-9999',
-    avatar: null
-  });
-  
+  const { profile, updateProfile } = useProfile();
   const [securityForm, setSecurityForm] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
 
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setProfileForm({
-      ...profileForm,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSecurityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSecurityForm({
-      ...securityForm,
-      [e.target.name]: e.target.value
-    });
-  };
-
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      // Mock API call - to be replaced with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await updateProfile.mutateAsync({
+        name: profile?.name || '',
+        phone: profile?.phone || '',
+        company: profile?.company || '',
+        bio: profile?.bio || '',
+      });
       
       toast({
         title: "Perfil atualizado",
@@ -108,7 +91,7 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Meu Perfil</h1>
-        <p className="text-muted-foreground">Gerencie suas informações pessoais e preferências</p>
+        <p className="text-muted-foreground">Gerencie suas informações pessoais e profissionais</p>
       </div>
       
       <Tabs defaultValue="profile" className="w-full">
@@ -131,10 +114,12 @@ export default function ProfilePage() {
             </CardHeader>
             <form onSubmit={handleProfileSubmit}>
               <CardContent className="space-y-4">
-                <div className="flex flex-col items-center space-y-4">
+                <div className="flex flex-col items-center space
+
+-y-4">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={profileForm.avatar || ''} />
-                    <AvatarFallback className="text-2xl">{profileForm.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={profile?.avatar_url || ''} />
+                    <AvatarFallback className="text-2xl">{profile?.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <Button variant="outline" size="sm">
                     Alterar foto
@@ -149,20 +134,8 @@ export default function ProfilePage() {
                     <Input 
                       id="name"
                       name="name"
-                      value={profileForm.name}
-                      onChange={handleProfileChange}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input 
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={profileForm.email}
-                      onChange={handleProfileChange}
+                      value={profile?.name || ''}
+                      onChange={(e) => updateProfile.mutate({ name: e.target.value })}
                       required
                     />
                   </div>
@@ -172,8 +145,8 @@ export default function ProfilePage() {
                     <Input 
                       id="company"
                       name="company"
-                      value={profileForm.company}
-                      onChange={handleProfileChange}
+                      value={profile?.company || ''}
+                      onChange={(e) => updateProfile.mutate({ company: e.target.value })}
                     />
                   </div>
                   
@@ -182,8 +155,8 @@ export default function ProfilePage() {
                     <Input 
                       id="phone"
                       name="phone"
-                      value={profileForm.phone}
-                      onChange={handleProfileChange}
+                      value={profile?.phone || ''}
+                      onChange={(e) => updateProfile.mutate({ phone: e.target.value })}
                     />
                   </div>
                   
@@ -192,8 +165,8 @@ export default function ProfilePage() {
                     <textarea
                       id="bio"
                       name="bio"
-                      value={profileForm.bio}
-                      onChange={handleProfileChange}
+                      value={profile?.bio || ''}
+                      onChange={(e) => updateProfile.mutate({ bio: e.target.value })}
                       className="flex min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
                     />
                   </div>
@@ -203,9 +176,9 @@ export default function ProfilePage() {
                 <Button 
                   type="submit"
                   className="bg-[#52E0A1] hover:bg-[#52E0A1]/90 text-[#1E2D3D]"
-                  disabled={isLoading}
+                  disabled={isLoading || updateProfile.isPending}
                 >
-                  {isLoading ? (
+                  {isLoading || updateProfile.isPending ? (
                     <>
                       <Loader className="mr-2 h-4 w-4 animate-spin" /> Salvando...
                     </>
@@ -237,7 +210,10 @@ export default function ProfilePage() {
                     name="currentPassword"
                     type="password"
                     value={securityForm.currentPassword}
-                    onChange={handleSecurityChange}
+                    onChange={(e) => setSecurityForm(prev => ({
+                      ...prev,
+                      currentPassword: e.target.value
+                    }))}
                     required
                   />
                 </div>
@@ -249,7 +225,10 @@ export default function ProfilePage() {
                     name="newPassword"
                     type="password"
                     value={securityForm.newPassword}
-                    onChange={handleSecurityChange}
+                    onChange={(e) => setSecurityForm(prev => ({
+                      ...prev,
+                      newPassword: e.target.value
+                    }))}
                     required
                   />
                 </div>
@@ -261,7 +240,10 @@ export default function ProfilePage() {
                     name="confirmPassword"
                     type="password"
                     value={securityForm.confirmPassword}
-                    onChange={handleSecurityChange}
+                    onChange={(e) => setSecurityForm(prev => ({
+                      ...prev,
+                      confirmPassword: e.target.value
+                    }))}
                     required
                   />
                 </div>
