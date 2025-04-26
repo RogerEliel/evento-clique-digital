@@ -27,7 +27,7 @@ export function MFASetup() {
       });
 
       if (error) throw error;
-      if (data?.totp) {
+      if (data && 'totp' in data) {
         setTotpSecret({
           qr: data.totp.qr_code,
           secret: data.totp.secret
@@ -60,10 +60,13 @@ export function MFASetup() {
 
       if (challengeError) throw challengeError;
       
+      // Corrected to use challengeData.id instead of challengeData.challenge_id
+      setChallengeId(challengeData?.id || null);
+      
       // Then verify with the code
       const { error } = await supabase.auth.mfa.verify({
         factorId,
-        challengeId: challengeData?.challenge_id || '',
+        challengeId: challengeData?.id || '',
         code: verificationCode
       });
 
@@ -90,15 +93,18 @@ export function MFASetup() {
   const setupSMS = async () => {
     try {
       setLoadingSMS(true);
-      // Phone factor type in Supabase is 'phone' not 'sms'
+      // Corrected: Phone factor type in Supabase is 'phone', and parameter is 'phone'
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'phone',
-        phoneNumber
+        phone: phoneNumber // Corrected from phoneNumber to phone
       });
 
       if (error) throw error;
       
-      setFactorId(data?.id || null);
+      // Access data.id only after checking the type safety
+      if (data) {
+        setFactorId(data.id || null);
+      }
       
       toast({
         title: "Código SMS enviado",
@@ -130,10 +136,13 @@ export function MFASetup() {
 
       if (challengeError) throw challengeError;
       
+      // Corrected to use challengeData.id instead of challengeData.challenge_id
+      setChallengeId(challengeData?.id || null);
+      
       // Then verify with the code
       const { error } = await supabase.auth.mfa.verify({
         factorId,
-        challengeId: challengeData?.challenge_id || '',
+        challengeId: challengeData?.id || '',
         code: verificationCode
       });
 
@@ -180,8 +189,15 @@ export function MFASetup() {
 
           <TabsContent value="authenticator" className="space-y-4">
             {!totpSecret ? (
-              <Button onClick={setupTOTP} loading={loadingTotp}>
-                Configurar Autenticador
+              <Button onClick={setupTOTP} disabled={loadingTotp}>
+                {loadingTotp ? (
+                  <div className="flex items-center">
+                    <span className="mr-2">Configurando...</span>
+                    <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                  </div>
+                ) : (
+                  "Configurar Autenticador"
+                )}
               </Button>
             ) : (
               <div className="space-y-4">
@@ -200,8 +216,15 @@ export function MFASetup() {
                     placeholder="Digite o código do autenticador"
                   />
                 </div>
-                <Button onClick={verifyTOTP} loading={loadingTotp}>
-                  Verificar
+                <Button onClick={verifyTOTP} disabled={loadingTotp}>
+                  {loadingTotp ? (
+                    <div className="flex items-center">
+                      <span className="mr-2">Verificando...</span>
+                      <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                    </div>
+                  ) : (
+                    "Verificar"
+                  )}
                 </Button>
               </div>
             )}
@@ -217,8 +240,15 @@ export function MFASetup() {
                 placeholder="+55 (11) 99999-9999"
               />
             </div>
-            <Button onClick={setupSMS} loading={loadingSMS}>
-              Enviar Código
+            <Button onClick={setupSMS} disabled={loadingSMS}>
+              {loadingSMS ? (
+                <div className="flex items-center">
+                  <span className="mr-2">Enviando código...</span>
+                  <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                </div>
+              ) : (
+                "Enviar Código"
+              )}
             </Button>
 
             {phoneNumber && factorId && (
@@ -230,8 +260,15 @@ export function MFASetup() {
                   onChange={(e) => setVerificationCode(e.target.value)}
                   placeholder="Digite o código recebido por SMS"
                 />
-                <Button onClick={verifySMS} loading={loadingSMS}>
-                  Verificar
+                <Button onClick={verifySMS} disabled={loadingSMS}>
+                  {loadingSMS ? (
+                    <div className="flex items-center">
+                      <span className="mr-2">Verificando...</span>
+                      <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+                    </div>
+                  ) : (
+                    "Verificar"
+                  )}
                 </Button>
               </div>
             )}

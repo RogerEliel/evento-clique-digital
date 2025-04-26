@@ -52,8 +52,9 @@ export function AuthForm({ type }: AuthFormProps) {
 
           if (mfaError) throw mfaError;
           
-          setFactorId(mfaData?.id || '');
-          setChallengeId(mfaData?.challenge_id || '');
+          setFactorId(mfaData?.id || null);
+          // The property is 'id', not 'challenge_id'
+          setChallengeId(mfaData?.id || null);
           setShowMFA(true);
           setLoading(false);
           return;
@@ -138,8 +139,15 @@ export function AuthForm({ type }: AuthFormProps) {
             required
           />
         </div>
-        <Button type="submit" className="w-full" loading={loading}>
-          Verificar
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? (
+            <div className="flex items-center">
+              <span className="mr-2">Verificando</span>
+              <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+            </div>
+          ) : (
+            "Verificar"
+          )}
         </Button>
       </form>
     );
@@ -169,8 +177,15 @@ export function AuthForm({ type }: AuthFormProps) {
           required
         />
       </div>
-      <Button type="submit" className="w-full" loading={loading}>
-        {type === "login" ? "Entrar" : "Cadastrar"}
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? (
+          <div className="flex items-center">
+            <span className="mr-2">{type === "login" ? "Entrando" : "Cadastrando"}</span>
+            <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+          </div>
+        ) : (
+          type === "login" ? "Entrar" : "Cadastrar"
+        )}
       </Button>
     </form>
   );
