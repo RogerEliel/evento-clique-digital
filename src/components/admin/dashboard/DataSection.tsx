@@ -1,5 +1,4 @@
-
-import { UserGrowthChart } from '../UserGrowthChart';
+import { UserGrowthChart } from '../charts/UserGrowthChart';
 import { RecentPhotographersList } from '../RecentPhotographersList';
 import type { DashboardStats, UserGrowthData } from '@/hooks/useAdminStats';
 
