@@ -16,20 +16,23 @@ export function MFASetup() {
   const [totpSecret, setTotpSecret] = useState<{ qr: string; secret: string } | null>(null);
   const [loadingTotp, setLoadingTotp] = useState(false);
   const [loadingSMS, setLoadingSMS] = useState(false);
+  const [factorId, setFactorId] = useState<string | null>(null);
+  const [challengeId, setChallengeId] = useState<string | null>(null);
 
   const setupTOTP = async () => {
     try {
       setLoadingTotp(true);
-      const { data: { totp }, error } = await supabase.auth.mfa.enroll({
+      const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp'
       });
 
       if (error) throw error;
-      if (totp) {
+      if (data?.totp) {
         setTotpSecret({
-          qr: totp.qr_code,
-          secret: totp.secret
+          qr: data.totp.qr_code,
+          secret: data.totp.secret
         });
+        setFactorId(data.id);
       }
     } catch (error) {
       toast({
@@ -45,8 +48,22 @@ export function MFASetup() {
   const verifyTOTP = async () => {
     try {
       setLoadingTotp(true);
+      
+      if (!factorId) {
+        throw new Error("Fator de autenticação não encontrado");
+      }
+
+      // First challenge the factor
+      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
+        factorId
+      });
+
+      if (challengeError) throw challengeError;
+      
+      // Then verify with the code
       const { error } = await supabase.auth.mfa.verify({
-        factorId: 'totp',
+        factorId,
+        challengeId: challengeData?.challenge_id || '',
         code: verificationCode
       });
 
@@ -58,6 +75,7 @@ export function MFASetup() {
       });
       setTotpSecret(null);
       setVerificationCode('');
+      setFactorId(null);
     } catch (error) {
       toast({
         title: "Erro na verificação",
@@ -72,13 +90,16 @@ export function MFASetup() {
   const setupSMS = async () => {
     try {
       setLoadingSMS(true);
-      const { error } = await supabase.auth.mfa.enroll({
-        factorType: 'sms',
+      // Phone factor type in Supabase is 'phone' not 'sms'
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: 'phone',
         phoneNumber
       });
 
       if (error) throw error;
-
+      
+      setFactorId(data?.id || null);
+      
       toast({
         title: "Código SMS enviado",
         description: "Digite o código recebido por SMS para confirmar.",
@@ -97,8 +118,22 @@ export function MFASetup() {
   const verifySMS = async () => {
     try {
       setLoadingSMS(true);
+      
+      if (!factorId) {
+        throw new Error("Fator de autenticação não encontrado");
+      }
+
+      // First challenge the factor
+      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
+        factorId
+      });
+
+      if (challengeError) throw challengeError;
+      
+      // Then verify with the code
       const { error } = await supabase.auth.mfa.verify({
-        factorId: 'sms',
+        factorId,
+        challengeId: challengeData?.challenge_id || '',
         code: verificationCode
       });
 
@@ -110,6 +145,7 @@ export function MFASetup() {
       });
       setPhoneNumber('');
       setVerificationCode('');
+      setFactorId(null);
     } catch (error) {
       toast({
         title: "Erro na verificação",
@@ -185,7 +221,7 @@ export function MFASetup() {
               Enviar Código
             </Button>
 
-            {phoneNumber && (
+            {phoneNumber && factorId && (
               <div className="space-y-2">
                 <Label htmlFor="sms-code">Código de Verificação</Label>
                 <Input

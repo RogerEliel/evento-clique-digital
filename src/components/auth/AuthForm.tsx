@@ -17,6 +17,8 @@ export function AuthForm({ type }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [mfaCode, setMfaCode] = useState("");
   const [showMFA, setShowMFA] = useState(false);
+  const [factorId, setFactorId] = useState<string | null>(null);
+  const [challengeId, setChallengeId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -37,11 +39,23 @@ export function AuthForm({ type }: AuthFormProps) {
             description: "Esta senha foi encontrada em vazamentos de dados. Por favor, escolha outra senha.",
             variant: "destructive",
           });
+          setLoading(false);
           return;
         }
 
-        if (error?.message.includes("mfa-required")) {
+        // Handle MFA verification
+        if (error?.message.includes("mfa") || (data?.session === null && data?.user !== null)) {
+          // Challenge for MFA
+          const { data: mfaData, error: mfaError } = await supabase.auth.mfa.challenge({
+            factorId: data?.user?.factors?.[0].id || '',
+          });
+
+          if (mfaError) throw mfaError;
+          
+          setFactorId(mfaData?.id || '');
+          setChallengeId(mfaData?.challenge_id || '');
           setShowMFA(true);
+          setLoading(false);
           return;
         }
 
@@ -86,10 +100,14 @@ export function AuthForm({ type }: AuthFormProps) {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: mfaCode,
-        type: "totp"
+      if (!factorId || !challengeId) {
+        throw new Error("Dados de verificação inválidos. Por favor, tente novamente.");
+      }
+
+      const { data, error } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId,
+        code: mfaCode,
       });
 
       if (error) throw error;
