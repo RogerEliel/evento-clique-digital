@@ -366,6 +366,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_admin_dashboard_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_all_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          name: string
+          created_at: string
+          role: Database["public"]["Enums"]["user_role"]
+          is_active: boolean
+        }[]
+      }
       get_event_by_guest_token: {
         Args: { token: string }
         Returns: {
@@ -385,17 +400,36 @@ export type Database = {
           photo_created_at: string
         }[]
       }
+      get_user_growth_by_week: {
+        Args: { weeks_count?: number }
+        Returns: {
+          week_start: string
+          new_users: number
+        }[]
+      }
       get_user_role: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      promote_to_admin: {
+        Args: { target_user_id: string }
+        Returns: undefined
       }
       set_guest_token: {
         Args: { token: string }
         Returns: undefined
       }
+      set_user_active_status: {
+        Args: { target_user_id: string; is_active: boolean }
+        Returns: undefined
+      }
     }
     Enums: {
-      user_role: "client" | "photographer"
+      user_role: "client" | "photographer" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -511,7 +545,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      user_role: ["client", "photographer"],
+      user_role: ["client", "photographer", "admin"],
     },
   },
 } as const

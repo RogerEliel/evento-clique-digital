@@ -26,6 +26,11 @@ import { PhotographerDashboard } from './pages/dashboard/photographer/Index';
 import ReportsPage from './pages/dashboard/photographer/Reports';
 import Settings from './pages/dashboard/photographer/Settings';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute';
+import { AdminLayout } from './layouts/AdminLayout';
+import AdminDashboard from './pages/admin/Dashboard';
+import UsersPage from './pages/admin/Users';
+import AdminSettings from './pages/admin/Settings';
 import SearchPhotographers from './pages/SearchPhotographers';
 import ForPhotographers from './pages/ForPhotographers';
 
@@ -92,6 +97,22 @@ function App() {
             <Route path="my-gallery" element={<MyGallery />} />
             <Route path="profile" element={<ClientProfile />} />
           </Route>
+        </Route>
+
+        {/* Admin Panel Routes */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout>
+                <Outlet />
+              </AdminLayout>
+            </AdminRoute>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         {/* Página 404 */}
