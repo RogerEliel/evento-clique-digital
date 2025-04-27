@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -192,7 +193,7 @@ export function AuthForm({ type }: AuthFormProps) {
         ) : (
           <>
             <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-            Entrar com Google
+            {type === "login" ? "Entrar com Google" : "Cadastrar com Google"}
           </>
         )}
       </Button>
